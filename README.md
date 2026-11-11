@@ -50,9 +50,8 @@ This is the raw URL for this public repository.
 ### Running the full example
 
 1. Execute `source.luau`, then `examples/showcase.luau` in the same session.
-2. Or execute `examples/showcase-standalone.luau` once (library + example bundled into one test file).
-3. Click the **gear** icon to open Theme Studio. Select a preset card; visual changes apply immediately.
-4. Press **Insert** to toggle the main window (the exact behavior can depend on executor input support).
+2. Click the **gear** icon to open Theme Studio. Select a preset card; visual changes apply immediately.
+3. Press **Insert** to toggle the main window (the exact behavior can depend on executor input support).
 
 ## API reference
 
