@@ -1,5 +1,5 @@
 --[[
-    Neverlose UI Library — Akiwave Edition v5.0 Preview (portrait dock design)
+    Neverlose UI Library — Akiwave Edition v5.1 Preview (color-only / Settings repair)
     Original Neverlose.cc Library by 4lpaca (MIT).
     Extends the original public API; never auto-generates sample windows/tabs.
     GUI creation is performed by calling :CreateWindow() in your own script.
@@ -341,7 +341,7 @@ end;
 
 --[[
 	AKIWAVE EDITION — Runtime Theme Engine
-	Appends anime presets, a custom theme editor and instant runtime theme
+	Adds named color presets, a custom theme editor and instant runtime theme
 	switching on top of the original Neverlose library. The original public
 	API, callbacks, config system and keybinds are untouched.
 ]]
