@@ -1,5 +1,5 @@
 --[[
-    Neverlose UI Library — Akiwave Edition v4.1 (external HTTPS artwork)
+    Neverlose UI Library — Akiwave Edition v5.0 Preview (sidebar portrait and safer surfaces)
     Original Neverlose.cc Library by 4lpaca (MIT).
     Extends the original public API; never auto-generates sample windows/tabs.
     GUI creation is performed by calling :CreateWindow() in your own script.
@@ -4369,7 +4369,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedLabel.Text = Name
 		BasedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 		BasedLabel.TextSize = 13.000
-		BasedLabel.TextTransparency = 0.35
+		BasedLabel.TextTransparency = 0.13
 		BasedLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 		BasedHandler.Name = NeverLose.RandomString();
@@ -4418,7 +4418,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 				});
 
 				NeverLose.PlayAnimate(BasedLabel , SlowyTween , {
-					TextTransparency = 0.35
+					TextTransparency = 0.13
 				})
 
 				NeverLose.PlayAnimate(LineFrame , SlowyTween , {
@@ -4460,7 +4460,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		});
 
 		NeverLose.PlayAnimate(BasedLabel , SlowyTween , {
-			TextTransparency = 0.35
+			TextTransparency = 0.13
 		})
 	end)))
 
@@ -4927,7 +4927,7 @@ function NeverLose:CreateThemeManager()
         });
         views[name]=view;
     end;
-    local Status = label(Root,'Hint','Anime assets may require access in the current experience.',19,606,562,16,10,'TextMuted2');
+    local Status = label(Root,'Hint','Portrait art stays in the sidebar  •  LIVE PREVIEW',19,606,562,16,10,'TextMuted2');
 
     local cards = {};
     local hero = frame(views.PRESETS,'Hero',0,2,558,139,'Surface',13,true);
@@ -5101,7 +5101,7 @@ function NeverLose:CreateThemeManager()
     sliderInfo('IMAGE SCALE','Scale',40,200,1,455);
     sliderInfo('HORIZONTAL OFFSET','OffsetX',-180,180,1,535);
     sliderInfo('VERTICAL OFFSET','OffsetY',-180,180,1,615);
-    label(views.ARTWORK,'ArtWarning','HTTPS downloads require writefile + getcustomasset. Image links may expire.',6,694,556,35,11,'TextMuted2');
+    label(views.ARTWORK,'ArtWarning','Portrait card + optional faint watermark. HTTPS requires supported file APIs.',6,694,556,35,11,'TextMuted2');
     views.ARTWORK.CanvasSize=UDim2.fromOffset(0,742);
 
     applyArt=function()
@@ -5475,6 +5475,11 @@ end;
 			})
 
 			Window.Shadow:Render(true);
+            task.delay(0.22,function()
+                if WindowFrame and WindowFrame.Parent and WindowFrame.BackgroundTransparency<0.75 then
+                    Akiwave.UpdateLayers()
+                end
+            end);
 		else
 
 			NeverLose.PlayAnimate(WindowFrame , SlowyTween , {
@@ -6487,11 +6492,11 @@ end;
 			SectionHandler.Size = UDim2.new(1, -10, 1, -29)
 			SectionHandler.ZIndex = 9
 
-			UIStroke.Transparency = 0.650
+			UIStroke.Transparency = 0.42
 			UIStroke.Color = Color3.fromRGB(45, 48, 58)
 			UIStroke.Parent = SectionHandler
 
-		UICorner.CornerRadius = UDim.new(0, 8)
+		UICorner.CornerRadius = UDim.new(0, 10)
 		UICorner.Parent = SectionHandler
 
 			UIListLayout.Parent = SectionHandler
@@ -6518,7 +6523,7 @@ end;
 			Section.SetRender = LPH_NO_VIRTUALIZE(function(value)
 				if value then
 					NeverLose.PlayAnimate(SectionLabel,SlowyTween,{
-						TextTransparency = 0.500
+						TextTransparency = 0.14
 					})
 
 					NeverLose.PlayAnimate(SectionHandler,SlowyTween,{
@@ -7593,6 +7598,53 @@ end;
 	-- Akiwave: anime theme layers for this window (Background / Left / Right)
 	NeverLose.Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame, LeftScrollingFrame);
 
+
+    -- v5 small active-theme pill and accent stripe.
+    do
+        local Line=Instance.new('Frame')
+        Line.Name='AkiwaveHeaderAccent'
+        Line.BorderSizePixel=0
+        Line.Size=UDim2.new(1,0,0,2)
+        Line.BackgroundColor3=Akiwave.GetColor('Accent')
+        Line.ZIndex=12
+        Line.Parent=RightMenuFrame
+        Akiwave.BindColor(Line,'BackgroundColor3','Accent')
+        local Badge=Instance.new('TextButton')
+        Badge.Name='AkiwaveThemeBadge'
+        Badge.AnchorPoint=Vector2.new(1,0.5)
+        Badge.Position=UDim2.new(1,-44,0.5,0)
+        Badge.Size=UDim2.fromOffset(122,28)
+        Badge.BackgroundColor3=Akiwave.GetColor('ControlDark')
+        Badge.BorderSizePixel=0
+        Badge.AutoButtonColor=false
+        Badge.Font=Enum.Font.GothamBold
+        Badge.TextSize=10
+        Badge.TextTruncate=Enum.TextTruncate.AtEnd
+        Badge.TextColor3=Akiwave.GetColor('TextSub')
+        Badge.ZIndex=13
+        Badge.Parent=RightHeader
+        local Round=Instance.new('UICorner')
+        Round.CornerRadius=UDim.new(0,7)
+        Round.Parent=Badge
+        local Border=Instance.new('UIStroke')
+        Border.Thickness=1
+        Border.Transparency=0.45
+        Border.Color=Akiwave.GetColor('Border')
+        Border.Parent=Badge
+        Akiwave.BindColor(Badge,'BackgroundColor3','ControlDark')
+        Akiwave.BindColor(Badge,'TextColor3','TextSub')
+        Akiwave.BindColor(Border,'Color','Border')
+        local function sync()
+            Badge.Text='✦ '..(Akiwave.Current.Name or 'THEME')
+        end
+        sync()
+        NeverLose:AddSignal(Badge.MouseButton1Click:Connect(function()
+            NeverLose:CreateThemeManager().SetRender(true)
+        end))
+        Akiwave.ThemeChanged=Akiwave.ThemeChanged or NeverLose:CreateSignal(nil)
+        Akiwave.ThemeChanged:Connect(sync)
+    end
+
 	-- Akiwave: gear button in the top-right of the window header -> Theme Manager
 	do
 		local ThemeGear = Instance.new('TextLabel');
@@ -7611,7 +7663,7 @@ end;
 		ThemeGear.Text = 'gear';
 		ThemeGear.TextColor3 = Color3.fromRGB(223, 223, 223);
 		ThemeGear.TextSize = 14;
-		ThemeGear.TextTransparency = 0.45;
+		ThemeGear.TextTransparency = 0.10;
 		ThemeGear.TextWrapped = true;
 
 		local gear_input = NeverLose:CreateInput(ThemeGear, LPH_NO_VIRTUALIZE(function()
