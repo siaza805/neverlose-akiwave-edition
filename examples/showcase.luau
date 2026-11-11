@@ -1,4 +1,4 @@
--- Akiwave Edition v5 showcase. Run source.luau first or load it via raw GitHub URL.
+-- Akiwave Edition v5.1 showcase (color only). Run source.luau first or load it via raw GitHub URL.
 local env = (getgenv and getgenv()) or _G
 local UI = assert(env.AkiwaveUI, "Please execute source.luau first")
 UI:SetTheme("Marin Monochrome")
@@ -34,7 +34,7 @@ Display:AddLabel("Accent preview"):AddColorPicker({
     Default=Color3.fromRGB(235,235,235),
     Callback=function(c) print("Accent:",c) end
 })
-Display:AddButton({Name="Open Theme Studio",Icon="paintbrush",Callback=function()
+Display:AddButton({Name="Open Theme Settings",Icon="paintbrush",Callback=function()
     UI:CreateThemeManager().SetRender(true)
 end})
 Display:AddButton({Name="Gojo Violet",Icon="palette",Callback=function()
