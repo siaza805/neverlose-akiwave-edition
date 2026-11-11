@@ -1,18 +1,22 @@
 # Changelog
 
-## v3.0.0 — 2026-11-11 (preview)
+## v4.0.0 — 2026-11-11 (preview)
 
-- Larger default window; polished rounded shell, spacing, sidebar and header
-- Improved readable labels, section cards, tabs and toggles
-- Responsive Theme Studio and a two-column preset gallery
-- Active preset and storage-mode indicators
-- Preserves existing library API and session-memory file API fallback
-- Added example and documentation
+- Redesigned Theme Studio into Presets, Appearance, Artwork and Settings views
+- Added Roblox Creator Store artwork IDs and a thumbnail fallback for inaccessible decals
+- Fixed artwork layering so the image can appear above the right pane background, beneath controls
+- Added a registry rescan to improve palette consistency after switching themes
+- Added theme-aware window chrome and a configurable glass-style transparency slider
+- Older named presets with empty artwork may be migrated to built-in imagery
+- Added two-click Unload GUI, with tracked signal cleanup and shared-library removal
+- Updated documentation, examples and asset sources
+- Runtime testing with particular executors and image permissions remains pending
+
+## v3.0.0
+- Rounded shell, larger controls, sidebar and header, and a preset gallery
 
 ## v2.0.0
-
-- Improved preset manager, runtime fallback and reusable library export
+- File API fallback and reusable module packaging
 
 ## v1.0.0
-
-- Anime preset and theme engine built on original Neverlose source
+- Initial Akiwave theme engine built on Neverlose source
