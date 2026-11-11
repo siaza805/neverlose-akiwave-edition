@@ -1,97 +1,114 @@
 # Neverlose GUI — Akiwave Edition
 
-**A customizable Roblox Luau UI library** built as a visual refinement of the Neverlose.cc UI Library (4lpaca). Intended as a reusable UI layer for scripts, not a ready-made game feature script.
+A reusable **Roblox Luau UI Library** based on the original Neverlose.cc UI Library (4lpaca; MIT). Preserves its window/tab/section/control API while adding anime presets, live color changes and a customizable Theme Studio.
 
-> **Status:** v3 design update / preview. Static checks completed; not yet verified in every Roblox runtime or executor. Built from a version already displayed successfully by the project user.
+> **v4.0.0 preview.** Source is structurally reviewed, but has not been runtime-verified on every executor. Third-party Roblox artwork might be restricted in individual experiences.
 
 ## Features
 
-- Neverlose-style left navigation, compact top bar, rounded windows and two-column sections
-- Improved typography, larger tab and toggle hit areas, section cards and spacing
-- Theme Studio accessed with the **gear icon** at the top-right of the window; **no extra sidebar category**
-- 7 presets: Neverlose Default, Marin Monochrome, Gojo Violet, Frieren Forest, Zero Two Crimson, Nezuko Sakura, Cyberpunk Neon
-- Runtime theme switching via `UI:SetTheme('Marin Monochrome')`
-- Custom colors; optional user-defined Roblox image assets, position, opacity, offsets and scale
-- Export/import JSON; optional file-based custom preset saving when the runtime supports the complete file API
-- Original API shape (`CreateWindow`, `AddTab`, `AddSection`, `AddLabel`, `AddToggle`, `AddSlider`, `AddDropdown`, etc.) retained
+- Sidebar, header, two-column sections, toggles, sliders, dropdowns and color pickers retain the Neverlose structure.
+- Settings gear opens a single Theme Studio with **PRESETS / APPEARANCE / ARTWORK / SETTINGS** views — no extra sidebar category.
+- Seven themes: Neverlose Default, Marin Monochrome, Gojo Violet, Frieren Forest, Zero Two Crimson, Nezuko Sakura and Cyberpunk Neon.
+- Palette recoloring of existing widgets, coherent surfaces, theme-aware chrome and a configurable glass-style window transparency.
+- Six anime presets reference Roblox Creator Store decal IDs, with a thumbnail fallback when images cannot load.
+- Editable HEX colors, automatic palette harmonization, image ID, position, opacity, scale and X/Y offsets.
+- JSON import/export, custom theme save/delete if native File API is present.
+- **Unload GUI** inside Theme Studio → Settings, requiring two clicks within five seconds.
+- Desktop and mobile scaling for the Theme Studio. Runtime-specific support is best-effort.
 
-## Installation / การติดตั้ง
+## Quick start
 
-**Run `source.luau` first.** It returns the library and also exposes `getgenv().AkiwaveUI` for executors that don't use the chunk's return value. Running the library alone does **not** show a demo window. Use `examples/showcase.luau` for a separate example.
+Execute the library, then create your own window. **Running source.luau alone does not create a demo UI.**
 
 ```lua
-local UI = (getgenv and getgenv().AkiwaveUI)
-assert(UI, 'Please run source.luau first')
+local UI = loadstring(game:HttpGet(
+    'https://raw.githubusercontent.com/siaza805/neverlose-akiwave-edition/main/source.luau'
+))()
+
 UI:SetTheme('Marin Monochrome')
+
 local Window = UI:CreateWindow({
-    Name = 'My Hub',
-    Content = 'Akiwave Edition',
-    Size = UI.Scales.Default,
-    Keybind = 'Insert',
-    ConfigFolder = 'MyHubConfigs'
+    Name = 'My Hub', Content = 'Akiwave Edition',
+    Size = UI.Scales.Default, Keybind = 'Insert',
+    ConfigFolder = 'AkiwaveConfigs'
 })
-local Tab = Window:AddTab({Name='Main', Icon='gear', Type='Double'})
-local Section = Tab:AddSection({Name='FEATURES', Position='left'})
-Section:AddLabel('Enable feature'):AddToggle({
-    Default = false,
-    Callback = function(enabled) print('Enabled:', enabled) end
+Window:AddSectionLabel('MAIN')
+local Tab = Window:AddTab({ Name = 'Main', Icon = 'gear', Type = 'Double' })
+local Section = Tab:AddSection({ Name = 'FEATURES', Position = 'left' })
+Section:AddLabel('Enabled'):AddToggle({
+    Default = false, Callback = function(value) print(value) end
 })
 Window:SetRender(true)
 ```
 
-Alternatively, load from GitHub directly:
+If you load the local `source.luau` file first, it also exposes `getgenv().AkiwaveUI` for scripts in the same session. For a more complete demo see [`examples/showcase.luau`](examples/showcase.luau).
+
+## Theme Studio
+
+Click the gear at the upper-right corner of your window.
+
+1. **Presets:** preview and apply anime themes.
+2. **Appearance:** change HEX colors, harmonize the palette and adjust window transparency up to 65%.
+3. **Artwork:** supply your own Roblox image or decal asset ID, toggle visibility and adjust placement, opacity and size.
+4. **Settings:** save/delete presets, import/export theme JSON, or click **Unload GUI** twice to remove the library UI. Unload does not close Roblox.
+
+### Programmatic controls
 
 ```lua
-local UI = loadstring(game:HttpGet('https://raw.githubusercontent.com/siaza805/neverlose-akiwave-edition/main/source.luau'))()
+UI:SetTheme('Gojo Violet')
+print(UI:GetTheme().Name)
+UI:CreateThemeManager().SetRender(true)
+
+UI:SetTheme({
+    Name = 'Custom Theme',
+    Palette = {Accent = '#B5A0FA', Background = '#101019'},
+    Image = {Enabled = true, Asset = 'rbxassetid://14412105393',
+        Opacity = 0.55, Position = 'Right', Scale = 100, OffsetX = 0, OffsetY = 0},
+    WindowTransparency = 0.22
+})
 ```
 
-This is the raw URL for this public repository.
+## Public API
 
-### Running the full example
-
-1. Execute `source.luau`, then `examples/showcase.luau` in the same session.
-2. Click the **gear** icon to open Theme Studio. Select a preset card; visual changes apply immediately.
-3. Press **Insert** to toggle the main window (the exact behavior can depend on executor input support).
-
-## API reference
-
-| API | Purpose |
+| Method | Description |
 |---|---|
-| `UI:CreateWindow(config)` | Create a window |
-| `Window:AddTab(config)` | Add navigation tab |
-| `Window:AddSectionLabel(name)` | Group nav labels |
+| `UI:CreateWindow(config)` | Create main window |
+| `Window:AddTab(config)` | Add tab |
+| `Window:AddSectionLabel(text)` | Sidebar heading |
 | `Tab:AddSection({Name, Position})` | Left/right card |
 | `Section:AddLabel(text):AddToggle(config)` | Toggle |
 | `Section:AddLabel(text):AddSlider(config)` | Slider |
 | `Section:AddLabel(text):AddDropdown(config)` | Dropdown |
 | `Section:AddLabel(text):AddColorPicker(config)` | Color picker |
 | `Section:AddButton(config)` | Button |
-| `UI:SetTheme(nameOrTheme)` | Change active theme |
-| `UI:GetTheme()` | Retrieve active theme data |
-| `UI:CreateThemeManager()` | Theme UI manager (`.SetRender(true)`) |
-| `UI.Akiwave.SaveTheme(name)` | Save theme, if persistent File API available |
-| `UI.Akiwave.ImportTheme(json)` / `.ExportTheme()` | Share theme JSON |
+| `UI:SetTheme(nameOrData)` | Switch theme at runtime |
+| `UI:GetTheme()` | Current theme as serializable data |
+| `UI.Akiwave.ExportTheme()` / `.ImportTheme(json)` | Share JSON theme |
 
-Refer to the original source and `examples/showcase.luau` for complete control options. Not every executor supports all underlying Roblox/third-party APIs.
+## Built-in artwork sources
 
-## Anime pictures / ภาพอนิเมะ
+Artwork is linked, not bundled. Images may be blocked by permissions, moderation, or Roblox decal/image ID differences; a thumbnail fallback is attempted, but **visibility is not guaranteed**. Use an asset you have permission to use if a preset image does not show.
 
-The preset names and color palettes ship without copyrighted character images. To add art, input an accessible Roblox asset ID in the Theme Studio and enable images. Ensure you have permission to use any artwork. A missing or inaccessible asset won't render.
+| Preset | Decal listing |
+|---|---|
+| Marin Monochrome | [Marin Kitagawa](https://create.roblox.com/store/asset/14412105393) |
+| Gojo Violet | [Gojo Satoru](https://create.roblox.com/store/asset/16928679461) |
+| Frieren Forest | [Frieren](https://create.roblox.com/store/asset/15148085308) |
+| Zero Two Crimson | [Zero Two](https://create.roblox.com/store/asset/5223216506) |
+| Nezuko Sakura | [Nezuko](https://create.roblox.com/store/asset/7068439603) |
+| Cyberpunk Neon | [Edgerunners artwork](https://create.roblox.com/store/asset/89736843413939) |
 
-## Compatibility and limitations
+**Marin Monochrome** refers to the UI's monochrome palette; the source decal itself may be colored.
 
-- Requires Roblox Luau and a runtime able to create local UI (`Instance`, `game:GetService`, etc.).
-- Runtime-specific file, hidden-GUI, clipboard and asset APIs are best-effort; no guarantee for any particular executor.
-- On runtimes without native file APIs, `UI.Runtime.StorageMode` is `session-memory`; **custom theme files do not persist between sessions**.
-- Mobile: Theme Studio uses adaptive scaling; the original library may still need device-specific tuning.
-- Not tested on all clients, devices or executors. Please report a reproducible issue and error trace.
+## Compatibility & limitations
 
-## Design reference
+- Roblox Luau, local UI APIs and permissions vary between clients and executors. No specific executor is guaranteed.
+- No File API? Theme changes work during the session, but custom theme files will not persist.
+- Always unload an older copy before running a newer one to avoid duplicate UIs.
+- This library contains UI elements, not game-specific features or anti-cheat bypasses.
 
-Figma concept: https://www.figma.com/design/6ohKDtklDuNLTJfj4VRBJh
+## License and credits
 
-## Credits and license
+Original **Neverlose.cc UI Library** by **4lpaca**; [source fork](https://github.com/j1scxxz-sketch/neverlose-ui-mod). Changes are distributed under the MIT license (see [LICENSE](LICENSE)). Independent community modification; not endorsed by Roblox, Neverlose or any anime rightsholder.
 
-Original Neverlose.cc UI Library by **4lpaca**, source fork: https://github.com/j1scxxz-sketch/neverlose-ui-mod. MIT-licensed source; this repository preserves attribution and distributes changes under the MIT license. UI updates and anime preset customization: Akiwave Edition.
-
-> This is an independent community modification and is not affiliated with the Neverlose brand or anime rightsholders.
+Figma design concept: https://www.figma.com/design/6ohKDtklDuNLTJfj4VRBJh
