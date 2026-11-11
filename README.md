@@ -1,51 +1,66 @@
-# Neverlose GUI — Akiwave Edition v5.1
+# Neverlose GUI — Akiwave Edition v5.2
 
-Roblox Luau **UI Library**, built on the original 4lpaca Neverlose.cc library (MIT). Preserves its window, tab, section and control APIs.
+**A reusable Roblox Luau UI Library** based on the original Neverlose.cc UI Library by 4lpaca (MIT). Refined dark interface, seven **color-only** themes, one Settings panel, and a fixed draggable window. **No anime artwork is downloaded or displayed.**
 
-> **Preview:** The library passed source-level checks but has not yet been tested in Roblox for this exact release.
+> **v5.2 preview:** Static source checks completed. Actual GUI behavior should still be verified in your Roblox client/executor.
 
-## Changes in v5.1
+## Improvements in v5.2
 
-- Removed all anime pictures, wallpapers, portrait widgets and remote image downloads.
-- Kept seven **color-only** presets, including Marin Monochrome, Gojo Violet, Frieren Forest, Zero Two Crimson, Nezuko Sakura and Cyberpunk Neon.
-- Replaced the nonworking Settings gear overlay with a directly clickable `TextButton.Activated` control (mouse and touch).
-- Rebuilt Theme Settings with two pages: **COLOR PRESETS** and **SETTINGS**.
-- Settings supports custom accent HEX, transparency buttons, saving a theme and confirmed **Unload GUI**.
-- Previously saved anime artwork fields are ignored, so old presets do not bring images back.
-- Reloading the library attempts to unload its previous instance, which helps when the previous gear is inaccessible.
+- **Fixes upward drift:** drag uses direct pointer delta from a fixed starting position instead of spawning a Tween on every mouse movement.
+- **Click ≠ drag:** movement begins only after 6px of pointer motion. Release ends the gesture; the window stays inside the viewport.
+- **Better layout:** differentiated header surface, sidebar accent rail, active tab indicator, wider navigation, section heading rails, clean 37px control rows, spaced two-column cards.
+- **Color-rich presets:** the Theme Studio displays real palette swatches; current theme badge is easier to read.
+- **Preserves the Neverlose API:** no new mandatory arguments, existing toggles/sliders/dropdowns/configs and two-click Settings → **Unload GUI** remain.
 
-## Installation / usage
+## Quick start
 
 ```lua
 local UI = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/siaza805/neverlose-akiwave-edition/main/source.luau"
+    'https://raw.githubusercontent.com/siaza805/neverlose-akiwave-edition/main/source.luau'
 ))()
-UI:SetTheme("Gojo Violet")
 
+UI:SetTheme('Gojo Violet')
 local Window = UI:CreateWindow({
-    Name = "AKIWAVE", Content = "Library demo",
-    Size = UI.Scales.Default, Keybind = "Insert"
+    Name = 'My Hub',
+    Content = 'Akiwave Edition',
+    Size = UI.Scales.Default,
+    Keybind = 'Insert',
+    ConfigFolder = 'AkiwaveConfigs'
 })
-local Main = Window:AddTab({Name = "Main", Icon = "gear", Type = "Double"})
-local Section = Main:AddSection({Name = "Features", Position = "left"})
-Section:AddLabel("Enabled"):AddToggle({
-    Default = false, Callback = function(value) print(value) end
+Window:AddSectionLabel('WORKSPACE')
+local Tab = Window:AddTab({Name = 'Main', Icon = 'house', Type = 'Double'})
+local Section = Tab:AddSection({Name = 'GENERAL', Position = 'left'})
+Section:AddLabel('Enabled'):AddToggle({
+    Default = true,
+    Callback = function(enabled) print('Enabled:', enabled) end
 })
 Window:SetRender(true)
 ```
 
-Or run [examples/showcase-standalone.luau](examples/showcase-standalone.luau) for a one-file UI showcase.
+**The pure library does not create any demo tabs or windows by itself.** To see a complete example, use [examples/showcase.luau](examples/showcase.luau) after loading the library, or run [examples/showcase-standalone.luau](examples/showcase-standalone.luau) as a single script.
 
-## How to open Settings
+## Settings and themes
 
-Use the **gear at the top-right of the GUI**, or click the current-theme badge beside it. Select **SETTINGS** in the dialog. Choose an accent, opacity, save a theme, or click **UNLOAD GUI** twice within 5 seconds to close only this library's UI.
+Click the top-right gear or theme badge → **COLOR PRESETS** / **SETTINGS**. Themes include Neverlose Default, Marin Monochrome, Gojo Violet, Frieren Forest, Zero Two Crimson, Nezuko Sakura and Cyberpunk Neon. These are **color names only**, with no character art.
 
-`Window.OpenSettings()` is available as another entry point if a particular executor does not dispatch clicks normally.
+In Settings you can set a custom HEX Accent, choose window transparency (0–30%), save a theme when File API is supported, and click **UNLOAD GUI twice** to remove the UI.
 
-## Compatibility notes
+## Manual drag regression test
 
-The Library itself has no anime image download dependencies. Native File API support varies by executor; saving presets persistently requires file functions. The v5.1 interface is statically checked, not yet certified on every Roblox runtime.
+1. Click empty content without moving: **no window movement**.
+2. Hold mouse on top header, move less than six pixels: **no movement**.
+3. Drag the header more than six pixels: **smooth, direct movement with no jitter**.
+4. Drag to top, bottom, left and right screen edges: **window stays inside viewport**.
+5. Release, then click empty space ten times: **no cumulative upward drifting**.
+6. Click the Settings gear and the Theme Studio close button: **no unintended dragging**.
+7. Toggle Insert, change themes, and repeat; verify mouse and touch if available.
 
-## Credits and license
+These require a real Roblox runtime and are **not yet marked as passed** by the project maintainer.
 
-Original Neverlose.cc UI Library by **4lpaca**, derived from [j1scxxz-sketch/neverlose-ui-mod](https://github.com/j1scxxz-sketch/neverlose-ui-mod). Licensed under the MIT license in [LICENSE](LICENSE). Independent community modification.
+## Public API and compatibility
+
+Retains `UI:CreateWindow`, `Window:AddTab`, `Tab:AddSection`, `Section:AddLabel(...):AddToggle/AddSlider/AddDropdown/AddColorPicker`, `Window:SetRender`, `UI:SetTheme`, `UI:GetTheme`, `UI:CreateThemeManager`, and others. File API support varies by executor: without it, theme persistence is session-only. Always unload an older copy before loading a new version.
+
+## Credits
+
+Original library **4lpaca**, derived from [j1scxxz-sketch/neverlose-ui-mod](https://github.com/j1scxxz-sketch/neverlose-ui-mod). MIT license in [LICENSE](LICENSE). Unofficial community project.
