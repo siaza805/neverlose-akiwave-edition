@@ -642,8 +642,10 @@ function Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame)
     local Right=MakeLayer('AkiwaveRightArt',RightMenuFrame,8);
     Akiwave.BindColor(WindowFrame,'BackgroundColor3','Background');
     Akiwave.BindColor(RightMenuFrame,'BackgroundColor3','Surface');
-    table.insert(Akiwave.WindowLayers,{Window=WindowFrame,Sidebar=LeftMenuFrame,
-        Content=RightMenuFrame,BG=BG,Left=Left,Right=Right});
+    local entry={Window=WindowFrame,Sidebar=LeftMenuFrame,
+        Content=RightMenuFrame,BG=BG,Left=Left,Right=Right,Dead=false};
+    WindowFrame.Destroying:Connect(function() entry.Dead=true;end);
+    table.insert(Akiwave.WindowLayers,entry);
     Akiwave.UpdateLayers();
 end;
 
@@ -652,7 +654,7 @@ function Akiwave.UpdateLayers()
     if not cfg then return; end;
     for i=#Akiwave.WindowLayers,1,-1 do
         local layers=Akiwave.WindowLayers[i];
-        if not layers.Window or not layers.Window.Parent then
+        if layers.Dead or not layers.Window then
             table.remove(Akiwave.WindowLayers,i);
         else
             local transparency=Akiwave.Current.WindowTransparency or 0.21;
@@ -5147,6 +5149,7 @@ function NeverLose:CreateWindow(Config)
 	MainWindowBorder.Transparency = 0.64;
 	MainWindowBorder.Thickness = 1;
 	MainWindowBorder.Parent = WindowFrame;
+	Akiwave.BindColor(MainWindowBorder,'Color','Accent');
 
 if not NeverLose.EnabledBlur then
     WindowFrame.BackgroundTransparency = 0
