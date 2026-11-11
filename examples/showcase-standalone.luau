@@ -1670,6 +1670,13 @@ NeverLose.Drag = LPH_NO_VIRTUALIZE(function(InputFrame: Frame, MoveFrame: Frame,
 
     NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
         if not dragging then return;end;
+        -- Some clients miss InputEnded when releasing outside the game window.
+        if beganInput and beganInput.UserInputType==Enum.UserInputType.MouseButton1 then
+            local ok,held=pcall(function()
+                return UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1);
+            end);
+            if ok and not held then finish();return;end;
+        end;
         if beganInput and beganInput.UserInputType==Enum.UserInputType.Touch then
             if input==beganInput then update(input);end;
         elseif input.UserInputType==Enum.UserInputType.MouseMovement then
@@ -7885,7 +7892,7 @@ pcall(function()
     if type(env) == 'table' then env.AkiwaveUI = NeverLose; end;
 end);
 
--- Example-only integration below. The standalone script is not the pure library.
+-- Demo-only integration below. Pure library is source.luau.
 -- Akiwave Edition v5.2 showcase (color only). Run source.luau first or load it via raw GitHub URL.
 local env = (getgenv and getgenv()) or _G
 local UI = assert(env.AkiwaveUI, "Please execute source.luau first")
