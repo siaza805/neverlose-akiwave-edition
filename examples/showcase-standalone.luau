@@ -1,3 +1,4 @@
+-- Akiwave Edition v5.3: fixed sidebar title and responsive status rows.
 --[[
     Neverlose UI Library — Akiwave Edition v5.2 Preview (stable drag / visual refinement)
     Original Neverlose.cc Library by 4lpaca (MIT).
@@ -354,7 +355,7 @@ local THEME_ATTRIBUTE = 'AkiwaveThemed';
 local WHITE = Color3.new(1, 1, 1);
 local BLACK = Color3.new(0, 0, 0);
 
-Akiwave.Version = '5.2.0';
+Akiwave.Version = '5.3.0';
 
 -- File API capability check: theme switching stays available even when
 -- the runtime cannot write files (session-only mode).
@@ -4142,9 +4143,12 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedLabel.BackgroundTransparency = 1.000
 		BasedLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedLabel.BorderSizePixel = 0
-		BasedLabel.Position = UDim2.new(0, 13, 0, 11)
-		BasedLabel.Size = UDim2.new(1,-144, 0, 19)
-        BasedLabel.TextTruncate = Enum.TextTruncate.AtEnd
+		BasedLabel.Position = UDim2.new(0, 13, 0.5, 0)
+        BasedLabel.AnchorPoint = Vector2.new(0, 0.5)
+        BasedLabel.Size = UDim2.new(1,-26, 0, 21)
+        BasedLabel.TextWrapped = true
+        BasedLabel.TextTruncate = Enum.TextTruncate.None
+        BasedLabel.TextYAlignment = Enum.TextYAlignment.Center
 		BasedLabel.ZIndex = LayerIndex + 9
 		BasedLabel.Font = Enum.Font.GothamMedium
 		BasedLabel.Text = Name
@@ -4155,13 +4159,13 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 
 		BasedHandler.Name = NeverLose.RandomString();
 		BasedHandler.Parent = BasedFrame
-		BasedHandler.AnchorPoint = Vector2.new(1, 0)
+		BasedHandler.AnchorPoint = Vector2.new(1, 0.5)
 		BasedHandler.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		BasedHandler.BackgroundTransparency = 1.000
 		BasedHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedHandler.BorderSizePixel = 0
-		BasedHandler.Position = UDim2.new(1, -12, 0, 6)
-		BasedHandler.Size = UDim2.new(0, 124, 0, 27) -- v5.2: comfortable controls
+		BasedHandler.Position = UDim2.new(1, -12, 0.5, 0)
+		BasedHandler.Size = UDim2.fromOffset(0, 27) -- size to actual controls
 		BasedHandler.ZIndex = LayerIndex + 12
 
 		UIListLayout.Parent = BasedHandler
@@ -4174,19 +4178,36 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		UICorner.CornerRadius = UDim.new(0, 7)
 		UICorner.Parent = BasedFrame
 
-		local UpdateWarp = LPH_NO_VIRTUALIZE(function()
-			local size = TextService:GetTextSize(BasedLabel.Text , BasedLabel.TextSize , BasedLabel.Font , Vector2.new(math.huge,math.huge));
-			NeverLose.PlayAnimate(BasedFrame , SlowyTween , {
-				Size = UDim2.new(1, 0, 0, size.Y + 13);
-			})
-
-			BasedLabel.Size = UDim2.new(1, -35, 1, 0)
-			BasedLabel.TextYAlignment = Enum.TextYAlignment.Top;
-		end);
-
-		if Warp then
-			UpdateWarp();
-		end;
+        -- Long text uses all available space; controls consume measured width only.
+        local lastMeasuredWidth=-1;
+        local updatingGeometry=false;
+        local function UpdateRowGeometry()
+            if updatingGeometry or not BasedFrame.Parent then return; end;
+            updatingGeometry=true;
+            local rowWidth=math.max(170,BasedFrame.AbsoluteSize.X);
+            local controlsWidth=math.ceil(UIListLayout.AbsoluteContentSize.X);
+            local available=math.max(76,rowWidth-controlsWidth-35);
+            if controlsWidth<=1 then available=math.max(76,rowWidth-28);end;
+            local handlerWidth=controlsWidth>1 and math.min(controlsWidth+6,math.max(0,rowWidth-110)) or 0;
+            if math.abs(BasedHandler.Size.X.Offset-handlerWidth)>0.5 then
+                BasedHandler.Size=UDim2.fromOffset(handlerWidth,27);
+            end;
+            BasedLabel.Size=UDim2.fromOffset(available,21);
+            local measured=TextService:GetTextSize(BasedLabel.Text,BasedLabel.TextSize,BasedLabel.Font,Vector2.new(available,2048));
+            local height=math.max(37,math.ceil(measured.Y)+17);
+            if height>220 then height=220;end;
+            BasedLabel.Size=UDim2.fromOffset(available,math.max(21,height-12));
+            if BasedFrame.Size.Y.Offset~=height then BasedFrame.Size=UDim2.new(1,0,0,height);end;
+            lastMeasuredWidth=BasedFrame.AbsoluteSize.X;
+            updatingGeometry=false;
+        end;
+        local UpdateWarp=UpdateRowGeometry;
+        NeverLose:AddSignal(BasedLabel:GetPropertyChangedSignal('Text'):Connect(UpdateRowGeometry));
+        NeverLose:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(UpdateRowGeometry));
+        NeverLose:AddSignal(BasedFrame:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()
+            if math.abs(BasedFrame.AbsoluteSize.X-lastMeasuredWidth)>1 then UpdateRowGeometry();end;
+        end));
+        task.defer(UpdateRowGeometry);
 
 		local handle = NeverLose:RegisiterHandler(BasedHandler , Signel);
 
@@ -4250,9 +4271,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 
 			BasedLabel.Text = t;
 
-			if Warp and oldtxt ~= t then
-				UpdateWarp();
-			end;
+			if oldtxt ~= t then UpdateWarp(); end;
 		end;
 
 		function handle:ToolTip(Content: string)
@@ -5199,36 +5218,36 @@ end;
     SidebarGlow.Parent=LeftMenuFrame;
     Akiwave.BindColor(SidebarGlow,'BackgroundColor3','Accent');
 
-    WindowName.Name = NeverLose.RandomString();
-	WindowName.Parent = LeftScrollingFrame
-	WindowName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	WindowName.BackgroundTransparency = 1.000
-	WindowName.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	WindowName.BorderSizePixel = 0
-	WindowName.Position = UDim2.new(0, 10, 0, 10)
-	WindowName.TextSize = 18.000
-	WindowName.Size = UDim2.new(1, -16, 0, 28)
-	WindowName.ZIndex = 7
-	WindowName.Font = Enum.Font.GothamBold
-	WindowName.Text = Window.Name
-	WindowName.TextColor3 = Color3.fromRGB(255, 255, 255)
-	WindowName.Size = UDim2.new(1, -16, 0, 28)
+    -- Dedicated fixed brand header keeps long game names out of tab scroll.
+    WindowName.Name='AkiwaveWindowBrand';
+    WindowName.Parent=LeftMenuFrame;
+    WindowName.BackgroundTransparency=1;
+    WindowName.BorderSizePixel=0;
+    WindowName.Position=UDim2.fromOffset(17,16);
+    WindowName.Size=UDim2.new(1,-32,0,28);
+    WindowName.ZIndex=7;
+    WindowName.Font=Enum.Font.GothamBold;
+    WindowName.TextSize=18;
+    WindowName.TextXAlignment=Enum.TextXAlignment.Left;
+    WindowName.TextTruncate=Enum.TextTruncate.AtEnd;
+    WindowName.TextColor3=Color3.fromRGB(255,255,255);
+    local brandName,brandContext=tostring(Window.Name):match('^%s*(.-)%s*/%s*(.+)%s*$');
+    WindowName.Text=brandName or tostring(Window.Name);
 
-	WindowContent.Name = NeverLose.RandomString();
-	WindowContent.Parent = HeadFrame
-	WindowContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	WindowContent.BackgroundTransparency = 1.000
-	WindowContent.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	WindowContent.BorderSizePixel = 0
-	WindowContent.Position = UDim2.new(0, 15, 0, 25)
-	WindowContent.Size = UDim2.new(0, 200, 0, 15)
-	WindowContent.ZIndex = 7
-	WindowContent.Font = Enum.Font.GothamBold
-	WindowContent.Text = Window.Content
-	WindowContent.TextColor3 = Color3.fromRGB(255, 255, 255)
-	WindowContent.TextSize = 11.000
-	WindowContent.TextTransparency = 0.650
-	WindowContent.TextXAlignment = Enum.TextXAlignment.Left
+    WindowContent.Name='AkiwaveWindowSubtitle';
+    WindowContent.Parent=LeftMenuFrame;
+    WindowContent.BackgroundTransparency=1;
+    WindowContent.BorderSizePixel=0;
+    WindowContent.Position=UDim2.fromOffset(18,43);
+    WindowContent.Size=UDim2.new(1,-36,0,19);
+    WindowContent.ZIndex=7;
+    WindowContent.Font=Enum.Font.GothamMedium;
+    WindowContent.TextSize=11;
+    WindowContent.TextXAlignment=Enum.TextXAlignment.Left;
+    WindowContent.TextTruncate=Enum.TextTruncate.AtEnd;
+    WindowContent.TextColor3=Color3.fromRGB(255,255,255);
+    WindowContent.TextTransparency=0.65;
+    WindowContent.Text=brandContext or tostring(Window.Content);
 
 	LineFrame.Name = NeverLose.RandomString();
 	LineFrame.Parent = HeadFrame
@@ -5241,7 +5260,18 @@ end;
 	LineFrame.Size = UDim2.new(1, -10, 0, 1)
 	LineFrame.ZIndex = 5
 
-	LeftScrollingFrame.Name = NeverLose.RandomString();
+    local BrandDivider=Instance.new('Frame');
+    BrandDivider.Name='AkiwaveBrandDivider';
+    BrandDivider.BorderSizePixel=0;
+    BrandDivider.BackgroundColor3=Akiwave.GetColor('Border');
+    BrandDivider.BackgroundTransparency=0.5;
+    BrandDivider.Position=UDim2.fromOffset(17,69);
+    BrandDivider.Size=UDim2.new(1,-34,0,1);
+    BrandDivider.ZIndex=8;
+    BrandDivider.Parent=LeftMenuFrame;
+    Akiwave.BindColor(BrandDivider,'BackgroundColor3','Border');
+
+    LeftScrollingFrame.Name = NeverLose.RandomString();
 	LeftScrollingFrame.Parent = LeftMenuFrame
 	LeftScrollingFrame.Active = true
 	LeftScrollingFrame.AnchorPoint = Vector2.new(0.5, 0)
@@ -5249,8 +5279,8 @@ end;
 	LeftScrollingFrame.BackgroundTransparency = 1.000
 	LeftScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LeftScrollingFrame.BorderSizePixel = 0
-	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 13)
-	LeftScrollingFrame.Size = UDim2.new(1, -18, 1, -78)
+	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 78)
+	LeftScrollingFrame.Size = UDim2.new(1, -18, 1, -146)
 	LeftScrollingFrame.ZIndex = 7
 	LeftScrollingFrame.ScrollBarThickness = 0
 
@@ -5845,7 +5875,8 @@ end;
 		TabContentLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TabContentLabel.BorderSizePixel = 0
 		TabContentLabel.Position = UDim2.new(0, 40, 0.5, 0)
-		TabContentLabel.Size = UDim2.new(1, -7, 0, 15)
+		TabContentLabel.Size = UDim2.new(1, -48, 0, 21)
+        TabContentLabel.TextTruncate = Enum.TextTruncate.AtEnd
 		TabContentLabel.ZIndex = 9
 		TabContentLabel.Font = Enum.Font.GothamMedium
 		TabContentLabel.Text = Config.Name
@@ -6055,7 +6086,8 @@ end;
 			SectionFrame.Parent = (string.lower(Config.Position) == 'left' and LeftScroll) or RightScroll
 			SectionFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			SectionFrame.BackgroundTransparency = 0
-			SectionFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+			SectionFrame.BackgroundColor3 = Akiwave.GetColor('Surface')
+            Akiwave.BindColor(SectionFrame,'BackgroundColor3','Surface');
 			SectionFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionFrame.BorderSizePixel = 0
 			SectionFrame.ClipsDescendants = true
@@ -6074,7 +6106,8 @@ end;
 			SectionLabel.ZIndex = 9
 			SectionLabel.Font = Enum.Font.GothamMedium
 			SectionLabel.Text = Config.Name
-			SectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			SectionLabel.TextColor3 = Akiwave.GetColor('Text')
+            Akiwave.BindColor(SectionLabel,'TextColor3','Text');
 			SectionLabel.TextSize = 13.000
 			SectionLabel.TextTransparency = 0.12
 			SectionLabel.Font = Enum.Font.GothamBold
@@ -6084,7 +6117,8 @@ end;
 			SectionHandler.Name = NeverLose.RandomString();
 			SectionHandler.Parent = SectionFrame
 			SectionHandler.AnchorPoint = Vector2.new(0.5, 0)
-			SectionHandler.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+			SectionHandler.BackgroundColor3 = Akiwave.GetColor('Card')
+            Akiwave.BindColor(SectionHandler,'BackgroundColor3','Card');
 			SectionHandler.BackgroundTransparency = 0
 			SectionHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionHandler.BorderSizePixel = 0
@@ -6094,7 +6128,9 @@ end;
 			SectionHandler.ZIndex = 9
 
 			UIStroke.Transparency = 0.50
-			UIStroke.Color = Color3.fromRGB(45, 48, 58)
+			UIStroke.Color = Akiwave.GetColor('Border')
+            Akiwave.BindColor(UIStroke,'Color','Border');
+            UIStroke.Thickness=1;
 			UIStroke.Parent = SectionHandler
 
 		UICorner.CornerRadius = UDim.new(0, 10)
@@ -6127,19 +6163,11 @@ end;
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			UIListLayout.Padding = UDim.new(0, 2)
 
-			UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
-
-
-				if UIListLayout.AbsoluteContentSize.Y <= 1 then
-					NeverLose.PlayAnimate(SectionFrame , VSlowTween , {
-						Size = UDim2.new(1, -5, 0, 0)
-					})
-				else
-					NeverLose.PlayAnimate(SectionFrame , VSlowTween , {
-						Size = UDim2.new(1, -5, 0, UIListLayout.AbsoluteContentSize.Y + 48)
-					})
-				end;
-			end));
+            -- Avoid competing tweens when live status messages change height.
+            NeverLose:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+                local y=UIListLayout.AbsoluteContentSize.Y;
+                SectionFrame.Size=UDim2.new(1,-5,0,(y<=1) and 0 or (y+48));
+            end));
 
 			local Section = NeverLose:RegisiterItem(SectionHandler , Tab.Signal);
 
@@ -7891,15 +7919,14 @@ pcall(function()
     local env = getgenv and getgenv() or _G;
     if type(env) == 'table' then env.AkiwaveUI = NeverLose; end;
 end);
-
--- Demo-only integration below. Pure library is source.luau.
--- Akiwave Edition v5.2 showcase (color only). Run source.luau first or load it via raw GitHub URL.
+-- Demo only; source.luau remains a pure reusable library.
+-- Akiwave Edition v5.3 showcase (color only). Run source.luau first or load it via raw GitHub URL.
 local env = (getgenv and getgenv()) or _G
 local UI = assert(env.AkiwaveUI, "Please execute source.luau first")
 UI:SetTheme("Gojo Violet")
 
 local Window = UI:CreateWindow({
-    Name = "AKIWAVE",
+    Name = "AKIWAVE / UI SHOWCASE",
     Content = "NEVERLOSE / UI SHOWCASE",
     Size = UI.Scales.Default,
     ConfigFolder = "AkiwaveExampleConfigs",
@@ -7909,6 +7936,7 @@ Window:AddSectionLabel("WORKSPACE")
 local Main = Window:AddTab({Name="Dashboard", Icon="house", Type="Double"})
 local Visuals = Window:AddTab({Name="Visuals", Icon="eye", Type="Double"})
 local Core = Main:AddSection({Name="GENERAL", Position="left"})
+Core:AddLabel("Long status: the world index is ready and the current objective is being tracked")
 Core:AddLabel("Interface enabled"):AddToggle({
     Default=true, Flag="aw_enabled",
     Callback=function(v) print("Enabled:",v) end
