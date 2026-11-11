@@ -4143,9 +4143,12 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedLabel.BackgroundTransparency = 1.000
 		BasedLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedLabel.BorderSizePixel = 0
-		BasedLabel.Position = UDim2.new(0, 13, 0, 11)
-		BasedLabel.Size = UDim2.new(1,-144, 0, 19)
-        BasedLabel.TextTruncate = Enum.TextTruncate.AtEnd
+		BasedLabel.Position = UDim2.new(0, 13, 0.5, 0)
+        BasedLabel.AnchorPoint = Vector2.new(0, 0.5)
+        BasedLabel.Size = UDim2.new(1,-26, 0, 21)
+        BasedLabel.TextWrapped = true
+        BasedLabel.TextTruncate = Enum.TextTruncate.None
+        BasedLabel.TextYAlignment = Enum.TextYAlignment.Center
 		BasedLabel.ZIndex = LayerIndex + 9
 		BasedLabel.Font = Enum.Font.GothamMedium
 		BasedLabel.Text = Name
@@ -4156,13 +4159,13 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 
 		BasedHandler.Name = NeverLose.RandomString();
 		BasedHandler.Parent = BasedFrame
-		BasedHandler.AnchorPoint = Vector2.new(1, 0)
+		BasedHandler.AnchorPoint = Vector2.new(1, 0.5)
 		BasedHandler.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 		BasedHandler.BackgroundTransparency = 1.000
 		BasedHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedHandler.BorderSizePixel = 0
-		BasedHandler.Position = UDim2.new(1, -12, 0, 6)
-		BasedHandler.Size = UDim2.new(0, 124, 0, 27) -- v5.2: comfortable controls
+		BasedHandler.Position = UDim2.new(1, -12, 0.5, 0)
+		BasedHandler.Size = UDim2.fromOffset(0, 27) -- size to actual controls
 		BasedHandler.ZIndex = LayerIndex + 12
 
 		UIListLayout.Parent = BasedHandler
@@ -4175,19 +4178,36 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		UICorner.CornerRadius = UDim.new(0, 7)
 		UICorner.Parent = BasedFrame
 
-		local UpdateWarp = LPH_NO_VIRTUALIZE(function()
-			local size = TextService:GetTextSize(BasedLabel.Text , BasedLabel.TextSize , BasedLabel.Font , Vector2.new(math.huge,math.huge));
-			NeverLose.PlayAnimate(BasedFrame , SlowyTween , {
-				Size = UDim2.new(1, 0, 0, size.Y + 13);
-			})
-
-			BasedLabel.Size = UDim2.new(1, -35, 1, 0)
-			BasedLabel.TextYAlignment = Enum.TextYAlignment.Top;
-		end);
-
-		if Warp then
-			UpdateWarp();
-		end;
+        -- Long text uses all available space; controls consume measured width only.
+        local lastMeasuredWidth=-1;
+        local updatingGeometry=false;
+        local function UpdateRowGeometry()
+            if updatingGeometry or not BasedFrame.Parent then return; end;
+            updatingGeometry=true;
+            local rowWidth=math.max(170,BasedFrame.AbsoluteSize.X);
+            local controlsWidth=math.ceil(UIListLayout.AbsoluteContentSize.X);
+            local available=math.max(76,rowWidth-controlsWidth-35);
+            if controlsWidth<=1 then available=math.max(76,rowWidth-28);end;
+            local handlerWidth=controlsWidth>1 and math.min(controlsWidth+6,math.max(0,rowWidth-110)) or 0;
+            if math.abs(BasedHandler.Size.X.Offset-handlerWidth)>0.5 then
+                BasedHandler.Size=UDim2.fromOffset(handlerWidth,27);
+            end;
+            BasedLabel.Size=UDim2.fromOffset(available,21);
+            local measured=TextService:GetTextSize(BasedLabel.Text,BasedLabel.TextSize,BasedLabel.Font,Vector2.new(available,2048));
+            local height=math.max(37,math.ceil(measured.Y)+17);
+            if height>220 then height=220;end;
+            BasedLabel.Size=UDim2.fromOffset(available,math.max(21,height-12));
+            if BasedFrame.Size.Y.Offset~=height then BasedFrame.Size=UDim2.new(1,0,0,height);end;
+            lastMeasuredWidth=BasedFrame.AbsoluteSize.X;
+            updatingGeometry=false;
+        end;
+        local UpdateWarp=UpdateRowGeometry;
+        NeverLose:AddSignal(BasedLabel:GetPropertyChangedSignal('Text'):Connect(UpdateRowGeometry));
+        NeverLose:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(UpdateRowGeometry));
+        NeverLose:AddSignal(BasedFrame:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()
+            if math.abs(BasedFrame.AbsoluteSize.X-lastMeasuredWidth)>1 then UpdateRowGeometry();end;
+        end));
+        task.defer(UpdateRowGeometry);
 
 		local handle = NeverLose:RegisiterHandler(BasedHandler , Signel);
 
@@ -4251,9 +4271,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 
 			BasedLabel.Text = t;
 
-			if Warp and oldtxt ~= t then
-				UpdateWarp();
-			end;
+			if oldtxt ~= t then UpdateWarp(); end;
 		end;
 
 		function handle:ToolTip(Content: string)
