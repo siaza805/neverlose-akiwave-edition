@@ -1,44 +1,24 @@
 # Changelog
 
-## v5.0.0-preview — 2026-11-11
+## v5.1.0 — 2026-11-11 (preview)
+- Removed all anime images, portrait art, watermarks, HTTPS artwork fetching and artwork options
+- Kept all seven presets as color-only palettes
+- Rebuilt Settings as a two-page compact dialog
+- Fixed top-right gear by using a native `TextButton.Activated`
+- Added mouse/touch-compatible Settings entry point and `Window.OpenSettings()`
+- Older saved/imported image metadata is ignored
+- Added auto-cleanup of older Akiwave instance on reload
+- Preserved original public Library APIs
+- Runtime QA is still pending
 
-- Studied [Fluent](https://github.com/dawid-scripts/Fluent), [Linoria](https://github.com/violin-suzutsuki/LinoriaLib), and [WindUI](https://footagesus.github.io/WindUI-Docs/) and applied their readability and layout principles
-- Moved full-strength anime artwork from over the content pane into a reserved sidebar portrait with a caption gradient
-- Added bounded, low-opacity (≤14% strength) background/right watermarks instead of full-window light images
-- Sidebar navigation scrolls independently; portrait hides when the window is short
-- Fixed original opening tween restoring a 60% transparent content pane
-- Default glass to 3.5% with a 0–35% adjustment range, documented recommended 0–10%
-- Polished control labels, section contrast, active theme badge, and accent stripe
-- Kept Theme Studio and two-click Unload GUI; kept public Neverlose API and HTTPS art support
-- Static API invariants checked; Roblox runtime testing is still pending
+## v5.0.0 — 2026-11-11
+- Improved visual hierarchy, opacity and sidebar layout
+- Created portrait card (removed in v5.1)
 
-## v4.1.0 — 2026-11-11 (preview)
+## v4.0.0 — 2026-11-11
+- Added Theme Studio and runtime theme switching
 
-- External HTTPS image URLs for 6 anime presets; Roblox decal fallbacks preserved
-- Download images through executor HTTP, validate PNG/JPEG bytes (6MB cap), cache to local filesystem
-- Render cached files via getcustomasset / getsynasset for Roblox ImageLabel
-- Artwork tab accepts custom HTTPS URLs and shows loader status when downloads fail
-- Preserves saved v4 presets and migrates known decal-only defaults
-- Added executor capability diagnostics and documentation
-- External host policies, asset permissions and per-executor runtime support are not yet certified
-
-## v4.0.0 — 2026-11-11 (preview)
-
-- Redesigned Theme Studio into Presets, Appearance, Artwork and Settings views
-- Added Roblox Creator Store artwork IDs and a thumbnail fallback for inaccessible decals
-- Fixed artwork layering so the image can appear above the right pane background, beneath controls
-- Added a registry rescan to improve palette consistency after switching themes
-- Added theme-aware window chrome and a configurable glass-style transparency slider
-- Older named presets with empty artwork may be migrated to built-in imagery
-- Added two-click Unload GUI, with tracked signal cleanup and shared-library removal
-- Updated documentation, examples and asset sources
-- Runtime testing with particular executors and image permissions remains pending
-
-## v3.0.0
-- Rounded shell, larger controls, sidebar and header, and a preset gallery
-
-## v2.0.0
-- File API fallback and reusable module packaging
-
-## v1.0.0
-- Initial Akiwave theme engine built on Neverlose source
+## Earlier
+- v3: spacing, header and controls refinements
+- v2: standalone library packaging and File API fallback
+- v1: initial runtime theme engine
