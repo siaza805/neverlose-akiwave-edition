@@ -277,7 +277,7 @@ end;
 NeverLose.Scales = {
 	Small = UDim2.fromOffset(540,380),
 	Mobile = UDim2.fromOffset(640,385),
-	Default = UDim2.fromOffset(780 , 530),
+	Default = UDim2.fromOffset(808 , 546),
 	Large = UDim2.fromOffset(920 , 630)
 };
 
@@ -342,7 +342,7 @@ local THEME_ATTRIBUTE = 'AkiwaveThemed';
 local WHITE = Color3.new(1, 1, 1);
 local BLACK = Color3.new(0, 0, 0);
 
-Akiwave.Version = '4.0.0';
+Akiwave.Version = '5.0.0-preview';
 
 -- File API capability check: theme switching stays available even when
 -- the runtime cannot write files (session-only mode).
@@ -436,7 +436,7 @@ Akiwave.Current = {
 		return p;
 	end)(),
     Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/3ff2299e3bb716a8d30f3926e86bb5b3be49afe68e718168a02824420a8c6fb1.jpg', FallbackAsset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 },
-    WindowTransparency = 0.21,
+    WindowTransparency = 0.035,
 };
 -- Match the initial palette to the initial selected theme; saved config may override.
 Akiwave.Current.Palette=BuildPalette(Color3.fromRGB(14,14,15), Color3.fromRGB(235,235,235));
@@ -725,70 +725,156 @@ function Akiwave.SetArtwork(image,asset,fallback,onStatus)
         end;
     end;
 end;
-function Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame)
-    local function MakeLayer(name, parent, z)
-        local img=Instance.new('ImageLabel');
-        img.Name=name;img.BackgroundTransparency=1;img.BorderSizePixel=0;
-        img.Active=false;img.Image='';img.ImageTransparency=0.45;
-        img.ScaleType=Enum.ScaleType.Fit;img.Visible=false;img.ZIndex=z;
-        img.Parent=parent;
-        return img;
-    end;
-    -- World transparency is controlled by the WindowFrame, but the wallpaper
-    -- MUST live inside RightMenuFrame; beneath it the image is occluded.
-    local BG=MakeLayer('AkiwaveBackgroundArt',RightMenuFrame,8);
-    local Left=MakeLayer('AkiwaveSidebarArt',LeftMenuFrame,6);
-    local Right=MakeLayer('AkiwaveRightArt',RightMenuFrame,8);
-    Akiwave.BindColor(WindowFrame,'BackgroundColor3','Background');
-    Akiwave.BindColor(RightMenuFrame,'BackgroundColor3','Surface');
-    local entry={Window=WindowFrame,Sidebar=LeftMenuFrame,
-        Content=RightMenuFrame,BG=BG,Left=Left,Right=Right,Dead=false};
-    WindowFrame.Destroying:Connect(function() entry.Dead=true;end);
-    table.insert(Akiwave.WindowLayers,entry);
-    Akiwave.UpdateLayers();
-end;
+
+-- v5: portrait belongs to the sidebar, never in front of settings controls.
+-- Background/Right imagery becomes a faint, bounded watermark.
+function Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame, LeftScrollingFrame)
+    local function image(name,parent,z)
+        local o=Instance.new('ImageLabel')
+        o.Name=name
+        o.BackgroundTransparency=1
+        o.BorderSizePixel=0
+        o.Image=''
+        o.ImageTransparency=1
+        o.ScaleType=Enum.ScaleType.Crop
+        o.Visible=false
+        o.Active=false
+        o.ZIndex=z
+        o.Parent=parent
+        return o
+    end
+    local dock=Instance.new('Frame')
+    dock.Name='AkiwavePortraitDock'
+    dock.AnchorPoint=Vector2.new(0,1)
+    dock.Position=UDim2.new(0,12,1,-72)
+    dock.Size=UDim2.new(1,-24,0,147)
+    dock.BackgroundColor3=Akiwave.GetColor('Card')
+    dock.BorderSizePixel=0
+    dock.ClipsDescendants=true
+    dock.ZIndex=6
+    dock.Visible=false
+    dock.Parent=LeftMenuFrame
+    local corner=Instance.new('UICorner')
+    corner.CornerRadius=UDim.new(0,11)
+    corner.Parent=dock
+    local stroke=Instance.new('UIStroke')
+    stroke.ApplyStrokeMode=Enum.ApplyStrokeMode.Border
+    stroke.Color=Akiwave.GetColor('Border')
+    stroke.Thickness=1
+    stroke.Transparency=0.16
+    stroke.Parent=dock
+    local portrait=image('AkiwavePortraitImage',dock,7)
+    portrait.Size=UDim2.fromScale(1,1)
+    local shade=Instance.new('Frame')
+    shade.Name='PortraitCaptionShade'
+    shade.AnchorPoint=Vector2.new(0,1)
+    shade.Position=UDim2.fromScale(0,1)
+    shade.Size=UDim2.new(1,0,0,53)
+    shade.BackgroundColor3=Color3.fromRGB(9,11,18)
+    shade.BackgroundTransparency=0.08
+    shade.BorderSizePixel=0
+    shade.ZIndex=8
+    shade.Parent=dock
+    local grad=Instance.new('UIGradient')
+    grad.Rotation=90
+    grad.Transparency=NumberSequence.new({
+        NumberSequenceKeypoint.new(0,0.83),
+        NumberSequenceKeypoint.new(1,0.02)
+    })
+    grad.Parent=shade
+    local title=Instance.new('TextLabel')
+    title.Name='AkiwavePortraitTheme'
+    title.BackgroundTransparency=1
+    title.Font=Enum.Font.GothamBold
+    title.TextSize=12
+    title.TextColor3=Color3.fromRGB(246,246,251)
+    title.TextTruncate=Enum.TextTruncate.AtEnd
+    title.TextXAlignment=Enum.TextXAlignment.Left
+    title.Position=UDim2.fromOffset(11,113)
+    title.Size=UDim2.new(1,-20,0,19)
+    title.ZIndex=9
+    title.Parent=dock
+    local subtitle=Instance.new('TextLabel')
+    subtitle.Name='AkiwavePortraitTag'
+    subtitle.BackgroundTransparency=1
+    subtitle.Font=Enum.Font.GothamMedium
+    subtitle.Text='ANIME / PRESET'
+    subtitle.TextSize=9
+    subtitle.TextColor3=Akiwave.GetColor('Accent')
+    subtitle.TextXAlignment=Enum.TextXAlignment.Left
+    subtitle.Position=UDim2.fromOffset(11,128)
+    subtitle.Size=UDim2.new(1,-20,0,15)
+    subtitle.ZIndex=9
+    subtitle.Parent=dock
+    local bg=image('AkiwaveBackgroundWatermark',RightMenuFrame,8)
+    local right=image('AkiwaveRightWatermark',RightMenuFrame,8)
+    Akiwave.BindColor(WindowFrame,'BackgroundColor3','Background')
+    Akiwave.BindColor(RightMenuFrame,'BackgroundColor3','Surface')
+    Akiwave.BindColor(dock,'BackgroundColor3','Card')
+    Akiwave.BindColor(stroke,'Color','Border')
+    Akiwave.BindColor(subtitle,'TextColor3','Accent')
+    local entry={Window=WindowFrame,Content=RightMenuFrame,Nav=LeftScrollingFrame,
+        Dock=dock,Portrait=portrait,Name=title,BG=bg,Right=right,Dead=false}
+    NeverLose:AddSignal(WindowFrame.Destroying:Connect(function()entry.Dead=true end))
+    table.insert(Akiwave.WindowLayers,entry)
+    NeverLose:CreateInput(dock,function()
+        NeverLose:CreateThemeManager().SetRender(true)
+    end)
+    NeverLose:AddSignal(WindowFrame:GetPropertyChangedSignal('AbsoluteSize'):Connect(function()
+        if not entry.Dead then Akiwave.UpdateLayers() end
+    end))
+    Akiwave.UpdateLayers()
+end
 
 function Akiwave.UpdateLayers()
-    local cfg=Akiwave.Current.Image;
-    if not cfg then return; end;
+    local cfg=Akiwave.Current.Image
+    if not cfg then return end
     for i=#Akiwave.WindowLayers,1,-1 do
-        local layers=Akiwave.WindowLayers[i];
-        if layers.Dead or not layers.Window then
-            table.remove(Akiwave.WindowLayers,i);
+        local layer=Akiwave.WindowLayers[i]
+        if layer.Dead or not layer.Window then
+            table.remove(Akiwave.WindowLayers,i)
         else
-            local transparency=Akiwave.Current.WindowTransparency or 0.21;
-            if layers.Window.BackgroundTransparency<0.82 then
-                layers.Window.BackgroundTransparency=transparency;
-            end;
-            -- Subtle tinted glass; enough transparency to see wallpaper.
-            if layers.Content.BackgroundTransparency<0.82 then
-                layers.Content.BackgroundTransparency=0.22;
-            end;
-            local target=(cfg.Position=='Left' and layers.Left)
-                or (cfg.Position=='Right' and layers.Right) or layers.BG;
-            local asset=tostring(cfg.Asset or '');
-            local raw=asset:match('^%d+$');
-            if raw then asset='rbxassetid://'..raw; end;
-            for _,img in ipairs({layers.BG,layers.Left,layers.Right}) do
-                local active=img==target and cfg.Enabled and asset~='';
-                img.Visible=active;
+            local glass=math.clamp(Akiwave.Current.WindowTransparency or 0.035,0,0.35)
+            if layer.Window.BackgroundTransparency<0.82 then
+                layer.Window.BackgroundTransparency=math.min(glass,0.28)
+            end
+            if layer.Content.BackgroundTransparency<0.82 then
+                layer.Content.BackgroundTransparency=math.min(glass*0.18,0.07)
+            end
+            local asset=tostring(cfg.Asset or '')
+            if asset:match('^%d+$') then asset='rbxassetid://'..asset end
+            local enabled=cfg.Enabled and asset~=''
+            local showDock=enabled and layer.Window.AbsoluteSize.Y>=415
+            layer.Dock.Visible=showDock
+            layer.Portrait.Visible=showDock
+            layer.Name.Text=Akiwave.Current.Name or 'Custom'
+            if layer.Nav then
+                layer.Nav.Size=UDim2.new(1,-10,1,showDock and -234 or -74)
+            end
+            if showDock then
+                Akiwave.SetArtwork(layer.Portrait,asset,cfg.FallbackAsset)
+                layer.Portrait.ImageTransparency=1-math.clamp(cfg.Opacity or 0.75,0,1)
+                layer.Portrait.Size=UDim2.fromScale(1,1)
+                layer.Portrait.AnchorPoint=Vector2.new(0,0)
+                layer.Portrait.Position=UDim2.fromOffset(0,0)
+            end
+            for _,art in ipairs({layer.BG,layer.Right}) do
+                local active=enabled and ((art==layer.BG and cfg.Position=='Background')
+                    or (art==layer.Right and cfg.Position=='Right'))
+                art.Visible=active
                 if active then
-                    Akiwave.SetArtwork(img,asset,cfg.FallbackAsset);
-                    img.ImageTransparency=1-math.clamp(cfg.Opacity or 0.55,0,1);
-                    img.AnchorPoint=Vector2.new(0.5,0.5);
-                    img.Position=UDim2.new(0.5,cfg.OffsetX or 0,0.5,cfg.OffsetY or 0);
-                    if img==layers.Left then
-                        img.Size=UDim2.new(math.clamp(cfg.Scale/100,0.4,2),0,0.68,0);
-                    elseif img==layers.Right then
-                        img.Size=UDim2.new(math.clamp(cfg.Scale/100,0.4,2),0,0.95,0);
-                    else
-                        img.Size=UDim2.new(math.clamp(cfg.Scale/100,0.4,2),0,1,0);
-                    end;
-                end;
-            end;
-        end;
-    end;
-end;
+                    Akiwave.SetArtwork(art,asset,cfg.FallbackAsset)
+                    -- Max 14 percent watermark strength keeps controls legible.
+                    art.ImageTransparency=1-math.clamp(cfg.Opacity or 0.75,0,1)*0.14
+                    art.AnchorPoint=Vector2.new(1,1)
+                    local scale=math.clamp(tonumber(cfg.Scale) or 100,35,200)/100
+                    art.Size=UDim2.fromOffset(math.floor(210*scale),math.floor(245*scale))
+                    art.Position=UDim2.new(1,-16+(cfg.OffsetX or 0),1,-12+(cfg.OffsetY or 0))
+                end
+            end
+        end
+    end
+end
 
 local function SanitizeName(n)
 	n = tostring(n or ''):gsub('[/\\:*?"<>|]', '_'):gsub('^%s+', ''):gsub('%s+$', '');
@@ -833,7 +919,7 @@ function Akiwave.Serialize()
 	end;
 
     return { Name = Akiwave.Current.Name, Palette = pal, Image = img,
-        WindowTransparency = Akiwave.Current.WindowTransparency or 0.21 };
+        WindowTransparency = Akiwave.Current.WindowTransparency or 0.035 };
 end;
 
 local function NormalizeTheme(input)
@@ -875,7 +961,7 @@ local function NormalizeTheme(input)
 
 	return {
         Name = SanitizeName(input.Name) or 'Custom',
-        WindowTransparency = math.clamp(tonumber(input.WindowTransparency) or Akiwave.Current.WindowTransparency or 0.21, 0, 0.65),
+        WindowTransparency = math.clamp(tonumber(input.WindowTransparency) or Akiwave.Current.WindowTransparency or 0.035, 0, 0.35),
         Palette = palette,
 		Image = {
 			Enabled = migratedEnabled,
@@ -4799,7 +4885,7 @@ function NeverLose:CreateThemeManager()
     Root.AnchorPoint = Vector2.new(0.5,0.5);
     Root.Position = UDim2.fromScale(0.5,0.5);
     Root.ZIndex = Z;
-    Root.BackgroundTransparency = 0.09;
+    Root.BackgroundTransparency = 0.01;
     Root.Visible = false;
     Root.ClipsDescendants = true;
     Root:SetAttribute('AkiwaveManaged', true);
@@ -4928,16 +5014,16 @@ function NeverLose:CreateThemeManager()
     local transKnob=frame(transTrack,'Handle',100,-5,17,17,'Accent',9);
     local slideDragging=false;
     local function setTrans(value)
-        value=math.clamp(value,0,0.65);
+        value=math.clamp(value,0,0.35);
         Akiwave.Current.WindowTransparency=value;
         transValue.Text=string.format('%d%%',math.floor(value*100+0.5));
-        local alpha=value/0.65;
+        local alpha=value/0.35;
         transFill.Size=UDim2.fromScale(alpha,1);
         transKnob.Position=UDim2.new(alpha, -8,-0.72,0);
         Akiwave.UpdateLayers();
     end;
     local function pointerX(input)
-        setTrans((input.Position.X-transTrack.AbsolutePosition.X)/math.max(transTrack.AbsoluteSize.X,1)*0.65);
+        setTrans((input.Position.X-transTrack.AbsolutePosition.X)/math.max(transTrack.AbsoluteSize.X,1)*0.35);
     end;
     NeverLose:AddSignal(transTrack.InputBegan:Connect(function(input)
         if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then slideDragging=true;pointerX(input);end;
@@ -4948,7 +5034,7 @@ function NeverLose:CreateThemeManager()
     NeverLose:AddSignal(UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then slideDragging=false;end;
     end));
-    label(views.APPEARANCE,'TransparencyHint','Higher values show more of the game through the interface.',5,510,540,20,11,'TextMuted2');
+    label(views.APPEARANCE,'TransparencyHint','Recommended: 0–10% transparency. High values reduce readability.',5,510,540,20,11,'TextMuted2');
     views.APPEARANCE.CanvasSize=UDim2.fromOffset(0,546);
 
     -- Artwork: visible image preview and a simple set of controls.
@@ -5143,7 +5229,7 @@ function NeverLose:CreateThemeManager()
             fields.Hex.Text=col:ToHex();
             fields.Swatch.BackgroundColor3=col;
         end;
-        setTrans(Akiwave.Current.WindowTransparency or 0.21);
+        setTrans(Akiwave.Current.WindowTransparency or 0.035);
         for field,obj in pairs(controls) do
             local value=Akiwave.Current.Image[field];
             obj.Set(field=='Opacity' and math.floor((value or 0.55)*100+0.5) or (value or 0),false);
@@ -5587,7 +5673,7 @@ end;
 	LeftScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LeftScrollingFrame.BorderSizePixel = 0
 	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 10)
-	LeftScrollingFrame.Size = UDim2.new(1, -10, 1, -20)
+	LeftScrollingFrame.Size = UDim2.new(1, -10, 1, -74)
 	LeftScrollingFrame.ZIndex = 7
 	LeftScrollingFrame.ScrollBarThickness = 0
 
@@ -7505,7 +7591,7 @@ end;
 	end;
 
 	-- Akiwave: anime theme layers for this window (Background / Left / Right)
-	NeverLose.Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame);
+	NeverLose.Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame, LeftScrollingFrame);
 
 	-- Akiwave: gear button in the top-right of the window header -> Theme Manager
 	do
