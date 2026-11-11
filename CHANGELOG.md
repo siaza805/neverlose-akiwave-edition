@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.1.0 — 2026-11-11 (preview)
+
+- External HTTPS image URLs for 6 anime presets; Roblox decal fallbacks preserved
+- Download images through executor HTTP, validate PNG/JPEG bytes (6MB cap), cache to local filesystem
+- Render cached files via getcustomasset / getsynasset for Roblox ImageLabel
+- Artwork tab accepts custom HTTPS URLs and shows loader status when downloads fail
+- Preserves saved v4 presets and migrates known decal-only defaults
+- Added executor capability diagnostics and documentation
+- External host policies, asset permissions and per-executor runtime support are not yet certified
+
 ## v4.0.0 — 2026-11-11 (preview)
 
 - Redesigned Theme Studio into Presets, Appearance, Artwork and Settings views
