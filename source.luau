@@ -390,16 +390,16 @@ local function BuildPalette(bg, accent)
 	return {
 		Accent = accent,
 		Background = bg,
-		Surface = MixColor(bg, WHITE, 0.035),
-		Panel = MixColor(bg, WHITE, 0.075),
-		Card = MixColor(bg, WHITE, 0.055),
+		Surface = MixColor(bg, WHITE, 0.045),
+		Panel = MixColor(bg, WHITE, 0.09),
+		Card = MixColor(bg, WHITE, 0.07),
 		Control = MixColor(bg, WHITE, 0.09),
 		ControlAlt = MixColor(bg, WHITE, 0.115),
 		ControlDark = MixColor(bg, WHITE, 0.045),
 		InputDark = MixColor(bg, BLACK, 0.15),
 		SliderTrack = MixColor(bg, WHITE, 0.02),
 		ToggleOff = MixColor(bg, BLACK, 0.35),
-		Border = MixColor(bg, WHITE, 0.12),
+		Border = MixColor(bg, WHITE, 0.18),
 		Text = Color3.fromRGB(255, 255, 255),
 		TextSub = MixColor(WHITE, accent, 0.12),
 		TextDim = MixColor(Color3.fromRGB(186, 186, 186), accent, 0.10),
@@ -418,12 +418,12 @@ Akiwave.Presets = {
 		end;
 		return p;
 	end)(), Image = { Enabled = false, Asset = '', Opacity = 0.35, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Marin Monochrome', Palette = BuildPalette(Color3.fromRGB(14, 14, 15), Color3.fromRGB(235, 235, 235)), Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/3ff2299e3bb716a8d30f3926e86bb5b3be49afe68e718168a02824420a8c6fb1.jpg', FallbackAsset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Gojo Violet', Palette = BuildPalette(Color3.fromRGB(16, 14, 24), Color3.fromRGB(167, 139, 250)), Image = { Enabled = true, Asset = 'https://media.wallpics.app/images/2026/04/17/pfp_1433_2e1b104b.png', FallbackAsset = 'rbxassetid://16928679461', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Frieren Forest', Palette = BuildPalette(Color3.fromRGB(13, 17, 14), Color3.fromRGB(146, 196, 138)), Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/EDYYJmabkShX.jpg', FallbackAsset = 'rbxassetid://15148085308', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Zero Two Crimson', Palette = BuildPalette(Color3.fromRGB(22, 13, 15), Color3.fromRGB(240, 84, 96)), Image = { Enabled = true, Asset = 'https://avatars.pfptown.com/482/zero-two-pfp-3978.png', FallbackAsset = 'rbxassetid://5223216506', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Nezuko Sakura', Palette = BuildPalette(Color3.fromRGB(20, 13, 17), Color3.fromRGB(244, 143, 177)), Image = { Enabled = true, Asset = 'https://avatars.pfptown.com/486/nezuko-pfp-3324.png', FallbackAsset = 'rbxassetid://7068439603', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Cyberpunk Neon', Palette = BuildPalette(Color3.fromRGB(9, 13, 18), Color3.fromRGB(0, 238, 255)), Image = { Enabled = true, Asset = 'https://image-1.uhdpaper.com/wallpaper/lucy-cyberpunk-edgerunners-series-4k-wallpaper-uhdpaper.com-638%401%40i.jpg', FallbackAsset = 'rbxassetid://89736843413939', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Marin Monochrome', Palette = BuildPalette(Color3.fromRGB(14, 14, 15), Color3.fromRGB(235, 235, 235)), Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/3ff2299e3bb716a8d30f3926e86bb5b3be49afe68e718168a02824420a8c6fb1.jpg', FallbackAsset = 'rbxassetid://14412105393', Opacity = 0.85, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Gojo Violet', Palette = BuildPalette(Color3.fromRGB(16, 14, 24), Color3.fromRGB(167, 139, 250)), Image = { Enabled = true, Asset = 'https://media.wallpics.app/images/2026/04/17/pfp_1433_2e1b104b.png', FallbackAsset = 'rbxassetid://16928679461', Opacity = 0.85, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Frieren Forest', Palette = BuildPalette(Color3.fromRGB(13, 17, 14), Color3.fromRGB(146, 196, 138)), Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/EDYYJmabkShX.jpg', FallbackAsset = 'rbxassetid://15148085308', Opacity = 0.85, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Zero Two Crimson', Palette = BuildPalette(Color3.fromRGB(22, 13, 15), Color3.fromRGB(240, 84, 96)), Image = { Enabled = true, Asset = 'https://avatars.pfptown.com/482/zero-two-pfp-3978.png', FallbackAsset = 'rbxassetid://5223216506', Opacity = 0.85, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Nezuko Sakura', Palette = BuildPalette(Color3.fromRGB(20, 13, 17), Color3.fromRGB(244, 143, 177)), Image = { Enabled = true, Asset = 'https://avatars.pfptown.com/486/nezuko-pfp-3324.png', FallbackAsset = 'rbxassetid://7068439603', Opacity = 0.85, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Cyberpunk Neon', Palette = BuildPalette(Color3.fromRGB(9, 13, 18), Color3.fromRGB(0, 238, 255)), Image = { Enabled = true, Asset = 'https://image-1.uhdpaper.com/wallpaper/lucy-cyberpunk-edgerunners-series-4k-wallpaper-uhdpaper.com-638%401%40i.jpg', FallbackAsset = 'rbxassetid://89736843413939', Opacity = 0.85, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
 };
 
 Akiwave.Current = {
@@ -435,7 +435,7 @@ Akiwave.Current = {
 		end;
 		return p;
 	end)(),
-    Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/3ff2299e3bb716a8d30f3926e86bb5b3be49afe68e718168a02824420a8c6fb1.jpg', FallbackAsset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 },
+    Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/3ff2299e3bb716a8d30f3926e86bb5b3be49afe68e718168a02824420a8c6fb1.jpg', FallbackAsset = 'rbxassetid://14412105393', Opacity = 0.85, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 },
     WindowTransparency = 0.035,
 };
 -- Match the initial palette to the initial selected theme; saved config may override.
