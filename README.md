@@ -2,7 +2,24 @@
 
 A reusable **Roblox Luau UI Library** based on the original Neverlose.cc UI Library (4lpaca; MIT). Preserves its window/tab/section/control API while adding anime presets, live color changes and a customizable Theme Studio.
 
-> **v4.1 preview.** Source is structurally reviewed, but has not been runtime-verified on every executor. Third-party Roblox artwork might be restricted in individual experiences.
+> **v5.0.0 preview.** Source is structurally reviewed, but has not been runtime-verified on every executor. Third-party Roblox artwork might be restricted in individual experiences.
+
+
+## v5 redesign — actual research applied
+
+This version does **not** rebuild Neverlose as another standalone UI. It refines the existing library while preserving your own tabs and two-column sections.
+
+| Research reference | Pattern adopted in Akiwave |
+|---|---|
+| [Fluent](https://github.com/dawid-scripts/Fluent) | Optional transparency kept separate from color palettes: nearly-opaque default and a safer 0–35% window transparency range |
+| [Linoria](https://github.com/violin-suzutsuki/LinoriaLib) | Scrollable sidebar, groupboxes and sections; a reserved portrait area never blocks navigation entries |
+| [WindUI](https://footagesus.github.io/WindUI-Docs/) | Dark readable surfaces, restrained accents, adaptive layout; art card hides on short windows |
+
+**What changed visually:** anime art now appears in a dedicated **sidebar portrait card** with a dark caption gradient, above the account footer. Clicking it opens Theme Studio. The content area uses only a bounded, faint watermark (at most 14% of the configured art opacity). No bright wallpaper covering toggles or dropdowns. The window itself defaults to 3.5% transparency, so text remains legible over bright Roblox maps. An accent line and **current-theme badge** appear in the header.
+
+The main window now defaults to **808 × 546**. The portrait dock is reserved only when an image is enabled and the window height allows it; long sidebar tab lists can still scroll.
+
+> Old saved themes may retain their earlier transparency value. After updating, use **Appearance → Window Transparency** and set it to around **0–10%** if your UI still looks washed out.
 
 ## Features
 
@@ -48,7 +65,7 @@ If you load the local `source.luau` file first, it also exposes `getgenv().Akiwa
 Click the gear at the upper-right corner of your window.
 
 1. **Presets:** preview and apply anime themes.
-2. **Appearance:** change HEX colors, harmonize the palette and adjust window transparency up to 65%.
+2. **Appearance:** change HEX colors, harmonize the palette and adjust window transparency up to 35%.
 3. **Artwork:** supply your own Roblox image or decal asset ID, toggle visibility and adjust placement, opacity and size.
 4. **Settings:** save/delete presets, import/export theme JSON, or click **Unload GUI** twice to remove the library UI. Unload does not close Roblox.
 
@@ -64,7 +81,7 @@ UI:SetTheme({
     Palette = {Accent = '#B5A0FA', Background = '#101019'},
     Image = {Enabled = true, Asset = 'rbxassetid://14412105393',
         Opacity = 0.55, Position = 'Right', Scale = 100, OffsetX = 0, OffsetY = 0},
-    WindowTransparency = 0.22
+    WindowTransparency = 0.035
 })
 ```
 
@@ -85,7 +102,7 @@ UI:SetTheme({
 | `UI:GetTheme()` | Current theme as serializable data |
 | `UI.Akiwave.ExportTheme()` / `.ImportTheme(json)` | Share JSON theme |
 
-## External image URLs — v4.1
+## External image URLs — v5
 
 The library cannot assign `https://...` directly to `ImageLabel.Image`. It calls an executor HTTP function (`request` or `game:HttpGet`), validates PNG/JPEG bytes (up to 6 MB), writes them under `AkiwaveArtworkCache/`, then obtains an asset URI through `getcustomasset` or `getsynasset`. Cached files avoid repeated downloads.
 
