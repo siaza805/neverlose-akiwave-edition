@@ -1670,6 +1670,13 @@ NeverLose.Drag = LPH_NO_VIRTUALIZE(function(InputFrame: Frame, MoveFrame: Frame,
 
     NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
         if not dragging then return;end;
+        -- Some clients miss InputEnded when releasing outside the game window.
+        if beganInput and beganInput.UserInputType==Enum.UserInputType.MouseButton1 then
+            local ok,held=pcall(function()
+                return UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1);
+            end);
+            if ok and not held then finish();return;end;
+        end;
         if beganInput and beganInput.UserInputType==Enum.UserInputType.Touch then
             if input==beganInput then update(input);end;
         elseif input.UserInputType==Enum.UserInputType.MouseMovement then
