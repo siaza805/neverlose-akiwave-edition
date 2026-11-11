@@ -1,3 +1,4 @@
+-- Akiwave Edition v5.3: fixed sidebar title and responsive status rows.
 --[[
     Neverlose UI Library — Akiwave Edition v5.2 Preview (stable drag / visual refinement)
     Original Neverlose.cc Library by 4lpaca (MIT).
@@ -354,7 +355,7 @@ local THEME_ATTRIBUTE = 'AkiwaveThemed';
 local WHITE = Color3.new(1, 1, 1);
 local BLACK = Color3.new(0, 0, 0);
 
-Akiwave.Version = '5.2.0';
+Akiwave.Version = '5.3.0';
 
 -- File API capability check: theme switching stays available even when
 -- the runtime cannot write files (session-only mode).
@@ -5199,36 +5200,36 @@ end;
     SidebarGlow.Parent=LeftMenuFrame;
     Akiwave.BindColor(SidebarGlow,'BackgroundColor3','Accent');
 
-    WindowName.Name = NeverLose.RandomString();
-	WindowName.Parent = LeftScrollingFrame
-	WindowName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	WindowName.BackgroundTransparency = 1.000
-	WindowName.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	WindowName.BorderSizePixel = 0
-	WindowName.Position = UDim2.new(0, 10, 0, 10)
-	WindowName.TextSize = 18.000
-	WindowName.Size = UDim2.new(1, -16, 0, 28)
-	WindowName.ZIndex = 7
-	WindowName.Font = Enum.Font.GothamBold
-	WindowName.Text = Window.Name
-	WindowName.TextColor3 = Color3.fromRGB(255, 255, 255)
-	WindowName.Size = UDim2.new(1, -16, 0, 28)
+    -- Dedicated fixed brand header keeps long game names out of tab scroll.
+    WindowName.Name='AkiwaveWindowBrand';
+    WindowName.Parent=LeftMenuFrame;
+    WindowName.BackgroundTransparency=1;
+    WindowName.BorderSizePixel=0;
+    WindowName.Position=UDim2.fromOffset(17,16);
+    WindowName.Size=UDim2.new(1,-32,0,28);
+    WindowName.ZIndex=7;
+    WindowName.Font=Enum.Font.GothamBold;
+    WindowName.TextSize=18;
+    WindowName.TextXAlignment=Enum.TextXAlignment.Left;
+    WindowName.TextTruncate=Enum.TextTruncate.AtEnd;
+    WindowName.TextColor3=Color3.fromRGB(255,255,255);
+    local brandName,brandContext=tostring(Window.Name):match('^%s*(.-)%s*/%s*(.+)%s*$');
+    WindowName.Text=brandName or tostring(Window.Name);
 
-	WindowContent.Name = NeverLose.RandomString();
-	WindowContent.Parent = HeadFrame
-	WindowContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	WindowContent.BackgroundTransparency = 1.000
-	WindowContent.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	WindowContent.BorderSizePixel = 0
-	WindowContent.Position = UDim2.new(0, 15, 0, 25)
-	WindowContent.Size = UDim2.new(0, 200, 0, 15)
-	WindowContent.ZIndex = 7
-	WindowContent.Font = Enum.Font.GothamBold
-	WindowContent.Text = Window.Content
-	WindowContent.TextColor3 = Color3.fromRGB(255, 255, 255)
-	WindowContent.TextSize = 11.000
-	WindowContent.TextTransparency = 0.650
-	WindowContent.TextXAlignment = Enum.TextXAlignment.Left
+    WindowContent.Name='AkiwaveWindowSubtitle';
+    WindowContent.Parent=LeftMenuFrame;
+    WindowContent.BackgroundTransparency=1;
+    WindowContent.BorderSizePixel=0;
+    WindowContent.Position=UDim2.fromOffset(18,43);
+    WindowContent.Size=UDim2.new(1,-36,0,19);
+    WindowContent.ZIndex=7;
+    WindowContent.Font=Enum.Font.GothamMedium;
+    WindowContent.TextSize=11;
+    WindowContent.TextXAlignment=Enum.TextXAlignment.Left;
+    WindowContent.TextTruncate=Enum.TextTruncate.AtEnd;
+    WindowContent.TextColor3=Color3.fromRGB(255,255,255);
+    WindowContent.TextTransparency=0.65;
+    WindowContent.Text=brandContext or tostring(Window.Content);
 
 	LineFrame.Name = NeverLose.RandomString();
 	LineFrame.Parent = HeadFrame
@@ -5241,7 +5242,18 @@ end;
 	LineFrame.Size = UDim2.new(1, -10, 0, 1)
 	LineFrame.ZIndex = 5
 
-	LeftScrollingFrame.Name = NeverLose.RandomString();
+    local BrandDivider=Instance.new('Frame');
+    BrandDivider.Name='AkiwaveBrandDivider';
+    BrandDivider.BorderSizePixel=0;
+    BrandDivider.BackgroundColor3=Akiwave.GetColor('Border');
+    BrandDivider.BackgroundTransparency=0.5;
+    BrandDivider.Position=UDim2.fromOffset(17,69);
+    BrandDivider.Size=UDim2.new(1,-34,0,1);
+    BrandDivider.ZIndex=8;
+    BrandDivider.Parent=LeftMenuFrame;
+    Akiwave.BindColor(BrandDivider,'BackgroundColor3','Border');
+
+    LeftScrollingFrame.Name = NeverLose.RandomString();
 	LeftScrollingFrame.Parent = LeftMenuFrame
 	LeftScrollingFrame.Active = true
 	LeftScrollingFrame.AnchorPoint = Vector2.new(0.5, 0)
@@ -5249,8 +5261,8 @@ end;
 	LeftScrollingFrame.BackgroundTransparency = 1.000
 	LeftScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LeftScrollingFrame.BorderSizePixel = 0
-	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 13)
-	LeftScrollingFrame.Size = UDim2.new(1, -18, 1, -78)
+	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 78)
+	LeftScrollingFrame.Size = UDim2.new(1, -18, 1, -146)
 	LeftScrollingFrame.ZIndex = 7
 	LeftScrollingFrame.ScrollBarThickness = 0
 
