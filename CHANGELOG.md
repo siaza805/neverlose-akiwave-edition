@@ -1,5 +1,17 @@
 # Changelog
 
+## v5.0.0-preview — 2026-11-11
+
+- Studied [Fluent](https://github.com/dawid-scripts/Fluent), [Linoria](https://github.com/violin-suzutsuki/LinoriaLib), and [WindUI](https://footagesus.github.io/WindUI-Docs/) and applied their readability and layout principles
+- Moved full-strength anime artwork from over the content pane into a reserved sidebar portrait with a caption gradient
+- Added bounded, low-opacity (≤14% strength) background/right watermarks instead of full-window light images
+- Sidebar navigation scrolls independently; portrait hides when the window is short
+- Fixed original opening tween restoring a 60% transparent content pane
+- Default glass to 3.5% with a 0–35% adjustment range, documented recommended 0–10%
+- Polished control labels, section contrast, active theme badge, and accent stripe
+- Kept Theme Studio and two-click Unload GUI; kept public Neverlose API and HTTPS art support
+- Static API invariants checked; Roblox runtime testing is still pending
+
 ## v4.1.0 — 2026-11-11 (preview)
 
 - External HTTPS image URLs for 6 anime presets; Roblox decal fallbacks preserved
