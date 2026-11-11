@@ -1,7 +1,7 @@
--- Akiwave Edition v5.1 showcase (color only). Run source.luau first or load it via raw GitHub URL.
+-- Akiwave Edition v5.2 showcase (color only). Run source.luau first or load it via raw GitHub URL.
 local env = (getgenv and getgenv()) or _G
 local UI = assert(env.AkiwaveUI, "Please execute source.luau first")
-UI:SetTheme("Marin Monochrome")
+UI:SetTheme("Gojo Violet")
 
 local Window = UI:CreateWindow({
     Name = "AKIWAVE",
