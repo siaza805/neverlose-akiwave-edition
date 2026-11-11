@@ -1,16 +1,27 @@
-# Neverlose GUI — Akiwave Edition v5.2
+# Neverlose GUI — Akiwave Edition v5.3
 
 **A reusable Roblox Luau UI Library** based on the original Neverlose.cc UI Library by 4lpaca (MIT). Refined dark interface, seven **color-only** themes, one Settings panel, and a fixed draggable window. **No anime artwork is downloaded or displayed.**
 
-> **v5.2 preview:** Static source checks completed. Actual GUI behavior should still be verified in your Roblox client/executor.
+> **v5.3 preview:** Static source checks completed. Actual GUI behavior should still be verified in your Roblox client/executor.
 
-## Improvements in v5.2
+## Improvements in v5.3
 
 - **Fixes upward drift:** drag uses direct pointer delta from a fixed starting position instead of spawning a Tween on every mouse movement.
 - **Click ≠ drag:** movement begins only after 6px of pointer motion. Release ends the gesture; the window stays inside the viewport.
 - **Better layout:** differentiated header surface, sidebar accent rail, active tab indicator, wider navigation, section heading rails, clean 37px control rows, spaced two-column cards.
 - **Color-rich presets:** the Theme Studio displays real palette swatches; current theme badge is easier to read.
 - **Preserves the Neverlose API:** no new mandatory arguments, existing toggles/sliders/dropdowns/configs and two-click Settings → **Unload GUI** remain.
+
+## v5.3 — Fixes for real hub layouts
+
+- Long titles such as `AKIWAVE / KING LEGACY V6` now display a fixed brand and subtitle above the scrolling sidebar.
+- `Section:AddLabel(text)` uses the **full card width** when there is no control. Long labels wrap and the row grows automatically.
+- Rows with Toggle, Slider or Dropdown reserve the **actual widget width**, not a fixed 144px.
+- `handle:SetText(text)` remeasures live status text; Section heights update without competing tweens.
+- Section surfaces, borders and headings use current preset colors. Sidebar tab titles do not overflow.
+- The GUI remains a color-only library, with Settings, Unload, and the existing API intact.
+
+**Important:** If the game-specific hub script itself shortens strings with literal `...`, the library cannot recover the missing text. That truncation must be removed from the hub script.
 
 ## Quick start
 
