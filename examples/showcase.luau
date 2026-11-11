@@ -1,10 +1,10 @@
--- Akiwave Edition v5.2 showcase (color only). Run source.luau first or load it via raw GitHub URL.
+-- Akiwave Edition v5.3 showcase (color only). Run source.luau first or load it via raw GitHub URL.
 local env = (getgenv and getgenv()) or _G
 local UI = assert(env.AkiwaveUI, "Please execute source.luau first")
 UI:SetTheme("Gojo Violet")
 
 local Window = UI:CreateWindow({
-    Name = "AKIWAVE",
+    Name = "AKIWAVE / UI SHOWCASE",
     Content = "NEVERLOSE / UI SHOWCASE",
     Size = UI.Scales.Default,
     ConfigFolder = "AkiwaveExampleConfigs",
@@ -14,6 +14,7 @@ Window:AddSectionLabel("WORKSPACE")
 local Main = Window:AddTab({Name="Dashboard", Icon="house", Type="Double"})
 local Visuals = Window:AddTab({Name="Visuals", Icon="eye", Type="Double"})
 local Core = Main:AddSection({Name="GENERAL", Position="left"})
+Core:AddLabel("Long status: the world index is ready and the current objective is being tracked")
 Core:AddLabel("Interface enabled"):AddToggle({
     Default=true, Flag="aw_enabled",
     Callback=function(v) print("Enabled:",v) end
