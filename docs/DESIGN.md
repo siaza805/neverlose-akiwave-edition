@@ -1,4 +1,4 @@
-# Akiwave Edition — Design system (v4)
+# Akiwave Edition — Design system (v4.1)
 
 The original Neverlose layout is preserved: script-defined sidebar tabs, two-column sections, and the built-in header controls. No extra theme-related sidebar categories are added.
 
@@ -16,6 +16,6 @@ The original Neverlose layout is preserved: script-defined sidebar tabs, two-col
 - ARTWORK: input asset ID, live preview, visibility toggle, background/left/right position, alpha/scale/offset controls
 - SETTINGS: saved themes, JSON import/export and two-click Unload GUI
 
-Images are referenced through Roblox Creator Store decal IDs and may not load in all experiences. The runtime attempts thumbnails as fallback; artwork is not bundled.
+Presets use remote HTTPS PNG/JPEG URLs; executors with complete local file APIs and getcustomasset can convert cached images for UI display. Roblox Creator Store asset IDs remain fallbacks. Artwork files are not bundled and third-party image copyrights remain with their owners.
 
 Design concept: https://www.figma.com/design/6ohKDtklDuNLTJfj4VRBJh
