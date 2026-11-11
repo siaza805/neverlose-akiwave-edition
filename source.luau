@@ -5875,7 +5875,8 @@ end;
 		TabContentLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TabContentLabel.BorderSizePixel = 0
 		TabContentLabel.Position = UDim2.new(0, 40, 0.5, 0)
-		TabContentLabel.Size = UDim2.new(1, -7, 0, 15)
+		TabContentLabel.Size = UDim2.new(1, -48, 0, 21)
+        TabContentLabel.TextTruncate = Enum.TextTruncate.AtEnd
 		TabContentLabel.ZIndex = 9
 		TabContentLabel.Font = Enum.Font.GothamMedium
 		TabContentLabel.Text = Config.Name
@@ -6085,7 +6086,8 @@ end;
 			SectionFrame.Parent = (string.lower(Config.Position) == 'left' and LeftScroll) or RightScroll
 			SectionFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			SectionFrame.BackgroundTransparency = 0
-			SectionFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+			SectionFrame.BackgroundColor3 = Akiwave.GetColor('Surface')
+            Akiwave.BindColor(SectionFrame,'BackgroundColor3','Surface');
 			SectionFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionFrame.BorderSizePixel = 0
 			SectionFrame.ClipsDescendants = true
@@ -6104,7 +6106,8 @@ end;
 			SectionLabel.ZIndex = 9
 			SectionLabel.Font = Enum.Font.GothamMedium
 			SectionLabel.Text = Config.Name
-			SectionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+			SectionLabel.TextColor3 = Akiwave.GetColor('Text')
+            Akiwave.BindColor(SectionLabel,'TextColor3','Text');
 			SectionLabel.TextSize = 13.000
 			SectionLabel.TextTransparency = 0.12
 			SectionLabel.Font = Enum.Font.GothamBold
@@ -6114,7 +6117,8 @@ end;
 			SectionHandler.Name = NeverLose.RandomString();
 			SectionHandler.Parent = SectionFrame
 			SectionHandler.AnchorPoint = Vector2.new(0.5, 0)
-			SectionHandler.BackgroundColor3 = Color3.fromRGB(45, 45, 50)
+			SectionHandler.BackgroundColor3 = Akiwave.GetColor('Card')
+            Akiwave.BindColor(SectionHandler,'BackgroundColor3','Card');
 			SectionHandler.BackgroundTransparency = 0
 			SectionHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionHandler.BorderSizePixel = 0
@@ -6124,7 +6128,9 @@ end;
 			SectionHandler.ZIndex = 9
 
 			UIStroke.Transparency = 0.50
-			UIStroke.Color = Color3.fromRGB(45, 48, 58)
+			UIStroke.Color = Akiwave.GetColor('Border')
+            Akiwave.BindColor(UIStroke,'Color','Border');
+            UIStroke.Thickness=1;
 			UIStroke.Parent = SectionHandler
 
 		UICorner.CornerRadius = UDim.new(0, 10)
@@ -6157,19 +6163,11 @@ end;
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			UIListLayout.Padding = UDim.new(0, 2)
 
-			UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
-
-
-				if UIListLayout.AbsoluteContentSize.Y <= 1 then
-					NeverLose.PlayAnimate(SectionFrame , VSlowTween , {
-						Size = UDim2.new(1, -5, 0, 0)
-					})
-				else
-					NeverLose.PlayAnimate(SectionFrame , VSlowTween , {
-						Size = UDim2.new(1, -5, 0, UIListLayout.AbsoluteContentSize.Y + 48)
-					})
-				end;
-			end));
+            -- Avoid competing tweens when live status messages change height.
+            NeverLose:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+                local y=UIListLayout.AbsoluteContentSize.Y;
+                SectionFrame.Size=UDim2.new(1,-5,0,(y<=1) and 0 or (y+48));
+            end));
 
 			local Section = NeverLose:RegisiterItem(SectionHandler , Tab.Signal);
 
