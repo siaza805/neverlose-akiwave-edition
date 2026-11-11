@@ -1,11 +1,11 @@
 --[[
-    Neverlose UI Library — Akiwave Edition v3 (executor-friendly package)
+    Neverlose UI Library — Akiwave Edition v4 (themed, artwork enabled)
     Original Neverlose.cc Library by 4lpaca (MIT).
     Extends the original public API; never auto-generates sample windows/tabs.
     GUI creation is performed by calling :CreateWindow() in your own script.
     Compatibility: best-effort for Roblox Luau runtimes; untested on individual executors.
     Runtime.StorageMode is 'native' or 'session-memory' (no persistent save).
-    Theme artwork requires user-supplied, accessible Roblox Image Asset IDs.
+    Preset artwork uses Creator Store decal IDs; image permissions still vary by experience.
 ]]
 --[[
                           Neverlose.cc UI Library
@@ -342,7 +342,7 @@ local THEME_ATTRIBUTE = 'AkiwaveThemed';
 local WHITE = Color3.new(1, 1, 1);
 local BLACK = Color3.new(0, 0, 0);
 
-Akiwave.Version = '3.0.0';
+Akiwave.Version = '4.0.0';
 
 -- File API capability check: theme switching stays available even when
 -- the runtime cannot write files (session-only mode).
@@ -418,16 +418,16 @@ Akiwave.Presets = {
 		end;
 		return p;
 	end)(), Image = { Enabled = false, Asset = '', Opacity = 0.35, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Marin Monochrome', Palette = BuildPalette(Color3.fromRGB(14, 14, 15), Color3.fromRGB(235, 235, 235)), Image = { Enabled = false, Asset = '', Opacity = 0.30, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Gojo Violet', Palette = BuildPalette(Color3.fromRGB(16, 14, 24), Color3.fromRGB(167, 139, 250)), Image = { Enabled = false, Asset = '', Opacity = 0.30, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Frieren Forest', Palette = BuildPalette(Color3.fromRGB(13, 17, 14), Color3.fromRGB(146, 196, 138)), Image = { Enabled = false, Asset = '', Opacity = 0.30, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Zero Two Crimson', Palette = BuildPalette(Color3.fromRGB(22, 13, 15), Color3.fromRGB(240, 84, 96)), Image = { Enabled = false, Asset = '', Opacity = 0.30, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Nezuko Sakura', Palette = BuildPalette(Color3.fromRGB(20, 13, 17), Color3.fromRGB(244, 143, 177)), Image = { Enabled = false, Asset = '', Opacity = 0.30, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Cyberpunk Neon', Palette = BuildPalette(Color3.fromRGB(9, 13, 18), Color3.fromRGB(0, 238, 255)), Image = { Enabled = false, Asset = '', Opacity = 0.30, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Marin Monochrome', Palette = BuildPalette(Color3.fromRGB(14, 14, 15), Color3.fromRGB(235, 235, 235)), Image = { Enabled = true, Asset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Gojo Violet', Palette = BuildPalette(Color3.fromRGB(16, 14, 24), Color3.fromRGB(167, 139, 250)), Image = { Enabled = true, Asset = 'rbxassetid://16928679461', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Frieren Forest', Palette = BuildPalette(Color3.fromRGB(13, 17, 14), Color3.fromRGB(146, 196, 138)), Image = { Enabled = true, Asset = 'rbxassetid://15148085308', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Zero Two Crimson', Palette = BuildPalette(Color3.fromRGB(22, 13, 15), Color3.fromRGB(240, 84, 96)), Image = { Enabled = true, Asset = 'rbxassetid://5223216506', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Nezuko Sakura', Palette = BuildPalette(Color3.fromRGB(20, 13, 17), Color3.fromRGB(244, 143, 177)), Image = { Enabled = true, Asset = 'rbxassetid://7068439603', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Cyberpunk Neon', Palette = BuildPalette(Color3.fromRGB(9, 13, 18), Color3.fromRGB(0, 238, 255)), Image = { Enabled = true, Asset = 'rbxassetid://89736843413939', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
 };
 
 Akiwave.Current = {
-	Name = 'Neverlose Default',
+	Name = 'Marin Monochrome',
 	Palette = (function()
 		local p = {};
 		for k, v in next, Akiwave.DefaultPalette do
@@ -435,8 +435,12 @@ Akiwave.Current = {
 		end;
 		return p;
 	end)(),
-	Image = { Enabled = false, Asset = '', Opacity = 0.35, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 },
+    Image = { Enabled = true, Asset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 },
+    WindowTransparency = 0.21,
 };
+-- Match the initial palette to the initial selected theme; saved config may override.
+Akiwave.Current.Palette=BuildPalette(Color3.fromRGB(14,14,15), Color3.fromRGB(235,235,235));
+NeverLose.AccentColor=Akiwave.Current.Palette.Accent;
 
 -- Color value -> semantic role maps (built from the library's original colors)
 local BgRoleMap = {
@@ -493,6 +497,13 @@ local function RegisterInstance(obj, prop, role)
 	end;
 end;
 
+function Akiwave.BindColor(obj,property,role)
+    if typeof(obj)=='Instance' then
+        obj:SetAttribute(THEME_ATTRIBUTE,true);
+        RegisterInstance(obj,property,role);
+    end;
+end;
+
 local function TryRegister(obj)
 	if typeof(obj) ~= 'Instance' then
 		return;
@@ -502,9 +513,9 @@ local function TryRegister(obj)
 		return obj:GetAttribute(THEME_ATTRIBUTE);
 	end);
 
-	if not ok or themed then
-		return;
-	end;
+    if not ok or themed or obj.Name == 'AkiwaveThemeStudio' or obj:FindFirstAncestor('AkiwaveThemeStudio') then
+        return;
+    end;
 
 	local changed = false;
 
@@ -562,7 +573,18 @@ Akiwave.RegistryConnection = NeverLose.ScreenGui.DescendantAdded:Connect(functio
 	task.defer(TryRegister, obj);
 end);
 
+-- Register every existing node when a theme changes: DescendantAdded can fire
+-- before a widget receives its final color on some executors.
+function Akiwave.Rescan()
+    if NeverLose.ScreenGui and NeverLose.ScreenGui.Parent then
+        for _, obj in ipairs(NeverLose.ScreenGui:GetDescendants()) do
+            TryRegister(obj);
+        end;
+    end;
+end;
+
 function Akiwave.Apply()
+    Akiwave.Rescan();
 	local palette = Akiwave.Current.Palette;
 
 	for i = #Akiwave.Registry, 1, -1 do
@@ -586,64 +608,85 @@ end;
 
 -- Anime image layers. Background sits inside WindowFrame, Left inside the
 -- sidebar, Right behind the tab content of the right menu.
+function Akiwave.SetArtwork(image, asset)
+    if typeof(image)~='Instance' or not image:IsA('ImageLabel') then return; end;
+    asset=tostring(asset or '');
+    if image:GetAttribute('AkiwaveAsset')==asset then return; end;
+    image:SetAttribute('AkiwaveAsset',asset);
+    image.Image=asset;
+    local id=asset:match('rbxassetid://(%d+)') or asset:match('^%d+$');
+    if id then
+        task.delay(2.3,function()
+            if not image.Parent or image:GetAttribute('AkiwaveAsset')~=asset then return;end;
+            local ok,loaded=pcall(function() return image.IsLoaded; end);
+            if ok and not loaded then
+                image.Image='rbxthumb://type=Asset&id='..id..'&w=420&h=420';
+            end;
+        end);
+    end;
+end;
+
 function Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame)
-	local function MakeLayer()
-		local img = Instance.new('ImageLabel');
-
-		img.Name = 'AkiwaveLayer';
-		img.BackgroundTransparency = 1;
-		img.BorderSizePixel = 0;
-		img.ScaleType = Enum.ScaleType.Fit;
-		img.Visible = false;
-		img.Image = '';
-
-		return img;
-	end;
-
-	local BG = MakeLayer();
-	BG.ZIndex = 2;
-	BG.Size = UDim2.fromScale(1, 1);
-	BG.Parent = WindowFrame;
-
-	local Left = MakeLayer();
-	Left.ZIndex = 1;
-	Left.Parent = LeftMenuFrame;
-
-	local Right = MakeLayer();
-	Right.ZIndex = 4;
-	Right.Parent = RightMenuFrame;
-
-	table.insert(Akiwave.WindowLayers, { Window = WindowFrame, BG = BG, Left = Left, Right = Right });
-
-	Akiwave.UpdateLayers();
+    local function MakeLayer(name, parent, z)
+        local img=Instance.new('ImageLabel');
+        img.Name=name;img.BackgroundTransparency=1;img.BorderSizePixel=0;
+        img.Active=false;img.Image='';img.ImageTransparency=0.45;
+        img.ScaleType=Enum.ScaleType.Fit;img.Visible=false;img.ZIndex=z;
+        img.Parent=parent;
+        return img;
+    end;
+    -- World transparency is controlled by the WindowFrame, but the wallpaper
+    -- MUST live inside RightMenuFrame; beneath it the image is occluded.
+    local BG=MakeLayer('AkiwaveBackgroundArt',RightMenuFrame,8);
+    local Left=MakeLayer('AkiwaveSidebarArt',LeftMenuFrame,6);
+    local Right=MakeLayer('AkiwaveRightArt',RightMenuFrame,8);
+    Akiwave.BindColor(WindowFrame,'BackgroundColor3','Background');
+    Akiwave.BindColor(RightMenuFrame,'BackgroundColor3','Surface');
+    table.insert(Akiwave.WindowLayers,{Window=WindowFrame,Sidebar=LeftMenuFrame,
+        Content=RightMenuFrame,BG=BG,Left=Left,Right=Right});
+    Akiwave.UpdateLayers();
 end;
 
 function Akiwave.UpdateLayers()
-	local cfg = Akiwave.Current.Image;
-
-	for _, layers in next, Akiwave.WindowLayers do
-		local target = (cfg.Position == 'Left' and layers.Left) or (cfg.Position == 'Right' and layers.Right) or layers.BG;
-
-		for _, img in next, { layers.BG, layers.Left, layers.Right } do
-			if img == target and cfg.Enabled and cfg.Asset ~= '' then
-				img.Image = cfg.Asset;
-				img.ImageTransparency = 1 - cfg.Opacity;
-
-				img.AnchorPoint = Vector2.new(0.5, 0.5);
-				img.Position = UDim2.new(0.5, cfg.OffsetX, 0.5, cfg.OffsetY);
-
-				if img == layers.BG then
-					img.Size = UDim2.fromScale(cfg.Scale / 100, cfg.Scale / 100);
-				else
-					img.Size = UDim2.new(cfg.Scale / 100, 0, 1, 0);
-				end;
-
-				img.Visible = true;
-			else
-				img.Visible = false;
-			end;
-		end;
-	end;
+    local cfg=Akiwave.Current.Image;
+    if not cfg then return; end;
+    for i=#Akiwave.WindowLayers,1,-1 do
+        local layers=Akiwave.WindowLayers[i];
+        if not layers.Window or not layers.Window.Parent then
+            table.remove(Akiwave.WindowLayers,i);
+        else
+            local transparency=Akiwave.Current.WindowTransparency or 0.21;
+            if layers.Window.BackgroundTransparency<0.82 then
+                layers.Window.BackgroundTransparency=transparency;
+            end;
+            -- Subtle tinted glass; enough transparency to see wallpaper.
+            if layers.Content.BackgroundTransparency<0.82 then
+                layers.Content.BackgroundTransparency=0.22;
+            end;
+            local target=(cfg.Position=='Left' and layers.Left)
+                or (cfg.Position=='Right' and layers.Right) or layers.BG;
+            local asset=tostring(cfg.Asset or '');
+            local raw=asset:match('^%d+$');
+            if raw then asset='rbxassetid://'..raw; end;
+            for _,img in ipairs({layers.BG,layers.Left,layers.Right}) do
+                local active=img==target and cfg.Enabled and asset~='';
+                img.Visible=active;
+                if active then
+                    Akiwave.SetArtwork(img,asset);
+                    img.ImageTransparency=1-math.clamp(cfg.Opacity or 0.55,0,1);
+                    img.AnchorPoint=Vector2.new(0.5,0.5);
+                    img.Position=UDim2.new(0.5,cfg.OffsetX or 0,0.5,cfg.OffsetY or 0);
+                    if img==layers.Left then
+                        img.Size=UDim2.new(math.clamp(cfg.Scale/100,0.4,2),0,0.68,0);
+                    elseif img==layers.Right then
+                        img.Size=UDim2.new(math.clamp(cfg.Scale/100,0.4,2),0,0.95,0);
+                    else
+                        img.Size=UDim2.new(math.clamp(cfg.Scale/100,0.4,2),0,1,0);
+                    end;
+                end;
+            end;
+        end;
+    end;
 end;
 
 local function SanitizeName(n)
@@ -688,7 +731,8 @@ function Akiwave.Serialize()
 		img[k] = v;
 	end;
 
-	return { Name = Akiwave.Current.Name, Palette = pal, Image = img };
+    return { Name = Akiwave.Current.Name, Palette = pal, Image = img,
+        WindowTransparency = Akiwave.Current.WindowTransparency or 0.21 };
 end;
 
 local function NormalizeTheme(input)
@@ -709,14 +753,26 @@ local function NormalizeTheme(input)
 		palette[role] = v;
 	end;
 
-	local img = type(input.Image) == 'table' and input.Image or {};
+    local img = type(input.Image) == 'table' and input.Image or {};
+    local migratedAsset=tostring(img.Asset or '');
+    local migratedEnabled=img.Enabled==true;
+    if migratedAsset=='' and type(input.Name)=='string' then
+        for _,preset in ipairs(Akiwave.Presets) do
+            if preset.Name==input.Name and preset.Image and preset.Image.Asset~='' then
+                migratedAsset=preset.Image.Asset;
+                migratedEnabled=true;
+                break;
+            end;
+        end;
+    end;
 
 	return {
-		Name = SanitizeName(input.Name) or 'Custom',
-		Palette = palette,
+        Name = SanitizeName(input.Name) or 'Custom',
+        WindowTransparency = math.clamp(tonumber(input.WindowTransparency) or Akiwave.Current.WindowTransparency or 0.21, 0, 0.65),
+        Palette = palette,
 		Image = {
-			Enabled = img.Enabled == true,
-			Asset = tostring(img.Asset or ''),
+			Enabled = migratedEnabled,
+			Asset = migratedAsset,
 			Opacity = math.clamp(tonumber(img.Opacity) or 0.35, 0, 1),
 			Position = (img.Position == 'Left' or img.Position == 'Right') and img.Position or 'Background',
 			Scale = math.clamp(tonumber(img.Scale) or 100, 10, 200),
@@ -789,9 +845,10 @@ function Akiwave.SetTheme(input)
 		return false, 'invalid theme data';
 	end;
 
-	Akiwave.Current.Name = theme.Name;
-	Akiwave.Current.Palette = theme.Palette;
-	Akiwave.Current.Image = theme.Image;
+    Akiwave.Current.Name = theme.Name;
+    Akiwave.Current.Palette = theme.Palette;
+    Akiwave.Current.Image = theme.Image;
+    Akiwave.Current.WindowTransparency = theme.WindowTransparency;
 
 	NeverLose.AccentColor = theme.Palette.Accent;
 
@@ -935,11 +992,9 @@ task.defer(function()
 end);
 
 function NeverLose:AddSignal(RBXSignal)
-	if NeverLose.UnloadEnabled then
-		table.insert(NeverLose.GlobalSignals,RBXSignal);
-	end;
-
-	return RBXSignal;
+    -- Lifecycle: track connections at creation time so UI unload can fully clean up.
+    if RBXSignal then table.insert(NeverLose.GlobalSignals,RBXSignal); end;
+    return RBXSignal;
 end;
 
 function NeverLose:AddQuery(ItemRoot: Frame , Name : string)
@@ -4520,947 +4575,480 @@ end;
 	AKIWAVE EDITION — Theme Manager UI
 	Opened from the gear button in the top-right of any window header.
 ]]
+-- Akiwave v4 Theme Studio: four focused views, live preview, editable palettes,
+-- artwork controls and a two-step Unload GUI action. No extra sidebar tab.
 function NeverLose:CreateThemeManager()
-	if Akiwave.ManagerCache then
-		return Akiwave.ManagerCache;
-	end;
-
-	local Manager = {};
-	local ZBase = 201;
-
-	local Root = Instance.new('Frame');
-	local UICorner = Instance.new('UICorner');
-	local UIStroke = Instance.new('UIStroke');
-	local TitleBar = Instance.new('Frame');
-	local TitleLabel = Instance.new('TextLabel');
-	local CloseButton = Instance.new('TextLabel');
-	local Content = Instance.new('ScrollingFrame');
-	local ContentLayout = Instance.new('UIListLayout');
-	local Shadow = NeverLose:CreateShadow(Root);
-
-	local Order = 0;
-
-	local function NewRow(height)
-		Order += 1;
-
-		local row = Instance.new('Frame');
-
-		row.Name = NeverLose.RandomString();
-		row.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-		row.BackgroundTransparency = 1;
-		row.BorderSizePixel = 0;
-		row.Size = UDim2.new(1, -16, 0, height);
-		row.ZIndex = ZBase + 1;
-		row.LayoutOrder = Order;
-		row.Parent = Content;
-
-		return row;
-	end;
-
-	local function NewLabel(parent, text, size, align, color)
-		local label = Instance.new('TextLabel');
-
-		label.Name = NeverLose.RandomString();
-		label.BackgroundTransparency = 1;
-		label.BorderSizePixel = 0;
-		label.Font = Enum.Font.GothamBold;
-		label.Text = text;
-		label.TextColor3 = color or Color3.fromRGB(223, 223, 223);
-		label.TextSize = size or 12;
-		label.TextXAlignment = align or Enum.TextXAlignment.Left;
-		label.ZIndex = ZBase + 2;
-		label.Parent = parent;
-
-		return label;
-	end;
-
-	local function NewTextBox(parent, placeholder, width)
-		local box = Instance.new('TextBox');
-
-		box.Name = NeverLose.RandomString();
-		box.BackgroundColor3 = Color3.fromRGB(34, 37, 46);
-		box.BackgroundTransparency = 0.35;
-		box.BorderSizePixel = 0;
-		box.Font = Enum.Font.GothamMedium;
-		box.PlaceholderText = placeholder;
-		box.PlaceholderColor3 = Color3.fromRGB(150, 150, 150);
-		box.Text = '';
-		box.TextColor3 = Color3.fromRGB(255, 255, 255);
-		box.TextSize = 13;
-		box.TextXAlignment = Enum.TextXAlignment.Left;
-		box.ClearTextOnFocus = false;
-		box.ZIndex = ZBase + 2;
-		box.Size = width;
-		box.Parent = parent;
-
-		local boxCorner = Instance.new('UICorner');
-		boxCorner.CornerRadius = UDim.new(0, 8);
-		boxCorner.Parent = box;
-
-		local pad = Instance.new('UIPadding');
-		pad.PaddingLeft = UDim.new(0, 6);
-		pad.Parent = box;
-		local outline = Instance.new('UIStroke');
-		outline.Color = Color3.fromRGB(72, 75, 88);
-		outline.Transparency = 0.52;
-		outline.Thickness = 1;
-		outline.Parent = box;
-
-		return box;
-	end;
-
-	local function NewButton(parent, text, width, callback)
-		local btn = Instance.new('Frame');
-
-		btn.Name = NeverLose.RandomString();
-		btn.BackgroundColor3 = Color3.fromRGB(48, 52, 66);
-		btn.BorderSizePixel = 0;
-		btn.ZIndex = ZBase + 2;
-		btn.Size = width;
-		btn.Parent = parent;
-
-		local corner = Instance.new('UICorner');
-		corner.CornerRadius = UDim.new(0, 8);
-		corner.Parent = btn;
-
-		local label = NewLabel(btn, text, 12, Enum.TextXAlignment.Center);
-		label.AnchorPoint = Vector2.new(0.5, 0.5);
-		label.Position = UDim2.fromScale(0.5, 0.5);
-		label.Size = UDim2.fromScale(1, 1);
-
-		local input = NeverLose:CreateInput(btn, callback or function() end);
-
-		return btn, label, input;
-	end;
-
-	local function NewSlider(parent, label, min, max, default, decimals, callback)
-		local row = NewRow(30);
-
-		local Label = NewLabel(row, label, 10);
-		Label.Size = UDim2.fromOffset(95, 22);
-
-		local Track = Instance.new('Frame');
-		Track.Name = NeverLose.RandomString();
-		Track.AnchorPoint = Vector2.new(0, 0.5);
-		Track.BackgroundColor3 = Color3.fromRGB(30, 29, 36);
-		Track.BorderSizePixel = 0;
-		Track.Position = UDim2.new(0, 108, 0.5, 0);
-		Track.Size = UDim2.new(1, -170, 0, 5);
-		Track.ZIndex = ZBase + 2;
-		Track.Parent = row;
-
-		local TrackCorner = Instance.new('UICorner');
-		TrackCorner.CornerRadius = UDim.new(1, 0);
-		TrackCorner.Parent = Track;
-
-		local Fill = Instance.new('Frame');
-		Fill.Name = NeverLose.RandomString();
-		Fill.BackgroundColor3 = Color3.fromRGB(220, 220, 220);
-		Fill.BorderSizePixel = 0;
-		Fill.Size = UDim2.fromScale(0.5, 1);
-		Fill.ZIndex = ZBase + 3;
-		Fill.Parent = Track;
-
-		local FillCorner = Instance.new('UICorner');
-		FillCorner.CornerRadius = UDim.new(1, 0);
-		FillCorner.Parent = Fill;
-
-		local Handle = Instance.new('Frame');
-		Handle.Name = NeverLose.RandomString();
-		Handle.AnchorPoint = Vector2.new(0.5, 0.5);
-		Handle.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-		Handle.BorderSizePixel = 0;
-		Handle.Position = UDim2.new(0.5, 0, 0.5, 0);
-		Handle.Size = UDim2.fromOffset(12, 12);
-		Handle.ZIndex = ZBase + 4;
-		Handle.Parent = Fill;
-
-		local HandleCorner = Instance.new('UICorner');
-		HandleCorner.CornerRadius = UDim.new(1, 0);
-		HandleCorner.Parent = Handle;
-
-		local ValueLabel = NewLabel(row, '', 10, Enum.TextXAlignment.Right);
-		ValueLabel.AnchorPoint = Vector2.new(1, 0.5);
-		ValueLabel.Position = UDim2.new(1, 0, 0.5, 0);
-		ValueLabel.Size = UDim2.fromOffset(50, 16);
-
-		local current = default;
-		local dragging = false;
-
-		local function Set(value, fire)
-			value = math.clamp(tonumber(value) or min, min, max);
-			local mult = 10 ^ decimals;
-			value = math.floor(value * mult + 0.5) / mult;
-			current = value;
-
-			local alpha = (value - min) / (max - min);
-			Fill.Size = UDim2.fromScale(alpha, 1);
-			ValueLabel.Text = string.format('%.' .. decimals .. 'f', value);
-
-			if fire ~= false then
-				callback(value);
-			end;
-		end;
-
-		local function UpdateFrom(x)
-			local rel = (x - Track.AbsolutePosition.X) / math.max(Track.AbsoluteSize.X, 1);
-			Set(min + (max - min) * math.clamp(rel, 0, 1));
-		end;
-
-		Track.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = true;
-				UpdateFrom(input.Position.X);
-			end;
-		end);
-
-		NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
-			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-				UpdateFrom(input.Position.X);
-			end;
-		end));
-
-		NeverLose:AddSignal(UserInputService.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = false;
-			end;
-		end));
-
-		Set(default, false);
-
-		return { Set = Set, Get = function() return current end };
-	end;
-
-	Root.Name = NeverLose.RandomString();
-	Root.AnchorPoint = Vector2.new(0.5, 0.5);
-	Root.BackgroundColor3 = Color3.fromRGB(19, 21, 29);
-	Root.BorderSizePixel = 0;
-	Root.ClipsDescendants = true;
-	Root.Position = UDim2.fromScale(0.5, 0.5);
-	Root.Size = UDim2.fromOffset(530, 612);
-	Root.ZIndex = 200;
-	Root.Visible = false;
-	Root.Parent = NeverLose.ScreenGui;
-
-	UICorner.CornerRadius = UDim.new(0, 14);
-	UICorner.Parent = Root;
-
-	UIStroke.Transparency = 0.3;
-	UIStroke.Color = Color3.fromRGB(96, 91, 116);
-	UIStroke.Parent = Root;
-
-	TitleBar.Name = NeverLose.RandomString();
-	TitleBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-	TitleBar.BackgroundTransparency = 1;
-	TitleBar.BorderSizePixel = 0;
-	TitleBar.Size = UDim2.new(1, 0, 0, 58);
-	TitleBar.ZIndex = ZBase;
-	TitleBar.Parent = Root;
-
-    local HeaderDivider = Instance.new('Frame');
-    HeaderDivider.Name = 'HeaderDivider';
-    HeaderDivider.BorderSizePixel = 0;
-    HeaderDivider.BackgroundColor3 = Color3.fromRGB(63, 65, 80);
-    HeaderDivider.BackgroundTransparency = 0.22;
-    HeaderDivider.Position = UDim2.new(0, 14, 1, -1);
-    HeaderDivider.Size = UDim2.new(1, -28, 0, 1);
-    HeaderDivider.ZIndex = ZBase + 1;
-    HeaderDivider.Parent = TitleBar;
-
-	TitleLabel.Name = NeverLose.RandomString();
-	TitleLabel.AnchorPoint = Vector2.new(0, 0.5);
-	TitleLabel.BackgroundTransparency = 1;
-	TitleLabel.Font = Enum.Font.GothamBold;
-	TitleLabel.Position = UDim2.new(0, 20, 0.5, -9);
-	TitleLabel.Size = UDim2.fromOffset(392, 20);
-	TitleLabel.ZIndex = ZBase + 1;
-	TitleLabel.Font = Enum.Font.GothamBold;
-	TitleLabel.Text = 'Akiwave  /  Theme Studio';
-	TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255);
-	TitleLabel.TextSize = 17;
-	TitleLabel.TextXAlignment = Enum.TextXAlignment.Left;
-	TitleLabel.Parent = TitleBar;
-
-	local HeaderSubtitle = Instance.new('TextLabel');
-	HeaderSubtitle.Name = 'ThemeStudioSubtitle';
-	HeaderSubtitle.BackgroundTransparency = 1;
-	HeaderSubtitle.Font = Enum.Font.Gotham;
-	HeaderSubtitle.Text = 'LIVE THEMES  /  PRESETS  /  CUSTOM ARTWORK';
-	HeaderSubtitle.TextSize = 10;
-	HeaderSubtitle.TextColor3 = Color3.fromRGB(155, 159, 176);
-	HeaderSubtitle.TextXAlignment = Enum.TextXAlignment.Left;
-	HeaderSubtitle.Position = UDim2.fromOffset(21, 35);
-	HeaderSubtitle.Size = UDim2.new(1, -92, 0, 15);
-	HeaderSubtitle.ZIndex = ZBase + 1;
-	HeaderSubtitle.Parent = TitleBar;
-
-	-- Fit the editor on phones without changing desktop dimensions.
-	local StudioScale = Instance.new('UIScale');
-	StudioScale.Name = 'AdaptiveScale';
-	StudioScale.Parent = Root;
-	local function FitStudio()
-		local cam = workspace.CurrentCamera;
-		local view = cam and cam.ViewportSize or Vector2.new(1280, 720);
-		StudioScale.Scale = math.clamp(math.min((view.X - 28) / 530, (view.Y - 28) / 612), 0.55, 1);
-	end;
-	FitStudio();
-	if workspace.CurrentCamera then
-		NeverLose:AddSignal(workspace.CurrentCamera:GetPropertyChangedSignal('ViewportSize'):Connect(FitStudio));
-	end;
-
-	CloseButton.Name = NeverLose.RandomString();
-	CloseButton.AnchorPoint = Vector2.new(1, 0.5);
-	CloseButton.BackgroundTransparency = 1;
-	CloseButton.FontFace = NeverLose.BuiltInBold;
-	CloseButton.Position = UDim2.new(1, -8, 0.5, 0);
-	CloseButton.Size = UDim2.fromOffset(32, 32);
-	CloseButton.ZIndex = ZBase + 1;
-	CloseButton.Text = 'x';
-	CloseButton.TextColor3 = Color3.fromRGB(223, 223, 223);
-	CloseButton.TextSize = 17;
-	CloseButton.Parent = TitleBar;
-
-	Content.Name = NeverLose.RandomString();
-	Content.BackgroundTransparency = 1;
-	Content.BorderSizePixel = 0;
-	Content.Position = UDim2.new(0, 16, 0, 68);
-	Content.Size = UDim2.new(1, -32, 1, -80);
-	Content.ZIndex = ZBase;
-	Content.ScrollBarThickness = 2;
-	Content.ScrollBarImageColor3 = Color3.fromRGB(45, 48, 58);
-	Content.CanvasSize = UDim2.new(0, 0, 0, 0);
-	Content.AutomaticCanvasSize = Enum.AutomaticSize.Y;
-	Content.Parent = Root;
-
-	ContentLayout.FillDirection = Enum.FillDirection.Vertical;
-	ContentLayout.SortOrder = Enum.SortOrder.LayoutOrder;
-	ContentLayout.Padding = UDim.new(0, 10);
-	ContentLayout.Parent = Content;
-
-	NeverLose.Drag(TitleBar, Root, 0.15);
-
-	NeverLose:CreateInput(CloseButton, function()
-		Manager.SetRender(false);
-	end);
-
-	----------------------------------------------------------------
-	-- Preset list
-	----------------------------------------------------------------
-	local CurrentThemeRow = NewRow(34);
-	local CurrentThemeBadge = NewLabel(CurrentThemeRow, '', 12, Enum.TextXAlignment.Left, Color3.fromRGB(229, 230, 237));
-	CurrentThemeBadge.Size = UDim2.new(1, -8, 1, 0);
-	local function RefreshCurrentThemeBadge()
-		CurrentThemeBadge.Text = 'ACTIVE  ' .. tostring(Akiwave.Current.Name) ..
-			(Akiwave.FileAPI and '   •   PERSISTENT' or '   •   SESSION ONLY');
-	end;
-	RefreshCurrentThemeBadge();
-	local PresetsHeader = NewRow(14);
-	local PresetsHeaderLabel = NewLabel(PresetsHeader, '01  /  THEME PRESETS', 11);
-	PresetsHeaderLabel.TextColor3 = Color3.fromRGB(120, 120, 120);
-
-	local PresetList = Instance.new('ScrollingFrame');
-	PresetList.Name = NeverLose.RandomString();
-	PresetList.BackgroundColor3 = Color3.fromRGB(35, 35, 40);
-	PresetList.BackgroundTransparency = 0.35;
-	PresetList.BorderSizePixel = 0;
-	PresetList.ZIndex = ZBase + 1;
-	PresetList.Size = UDim2.new(1, -16, 0, 240);
-	PresetList.ScrollBarThickness = 3;
-	PresetList.ScrollBarImageColor3 = Color3.fromRGB(45, 48, 58);
-	PresetList.CanvasSize = UDim2.new(0, 0, 0, 0);
-	PresetList.AutomaticCanvasSize = Enum.AutomaticSize.Y;
-	PresetList.Parent = Content;
-
-	Order += 1;
-	PresetList.LayoutOrder = Order;
-
-	local PresetListLayout = Instance.new('UIGridLayout');
-	PresetListLayout.SortOrder = Enum.SortOrder.LayoutOrder;
-	PresetListLayout.CellSize = UDim2.new(0.5, -10, 0, 88);
-	PresetListLayout.CellPadding = UDim2.fromOffset(8, 8);
-	PresetListLayout.Parent = PresetList;
-
-	local PresetPad = Instance.new('UIPadding');
-	PresetPad.PaddingLeft = UDim.new(0, 5);
-	PresetPad.PaddingTop = UDim.new(0, 4);
-	PresetPad.PaddingBottom = UDim.new(0, 4);
-	PresetPad.Parent = PresetList;
-
-	local function RefreshPresets()
-		for _, child in next, PresetList:GetChildren() do
-			if child:IsA('Frame') then
-				child:Destroy();
-			end;
-		end;
-
-		local list = {};
-		for _, preset in next, Akiwave.Presets do
-			table.insert(list, preset);
-		end;
-		for _, custom in next, Akiwave.ListCustom() do
-			table.insert(list, custom);
-		end;
-
-		local i = 0;
-		for _, preset in next, list do
-			i += 1;
-
-			local row = Instance.new('Frame');
-			row.Name = NeverLose.RandomString();
-			local active = preset.Name == Akiwave.Current.Name;
-			local themeAccent = (type(preset.Palette) == 'table' and typeof(preset.Palette.Accent) == 'Color3' and preset.Palette.Accent) or Color3.fromRGB(220, 220, 220);
-			local themeBg = (type(preset.Palette) == 'table' and typeof(preset.Palette.Background) == 'Color3' and preset.Palette.Background) or Color3.fromRGB(20, 21, 26);
-			row.BackgroundColor3 = themeBg;
-			row.BackgroundTransparency = 0;
-			row.BorderSizePixel = 0;
-			row.Size = UDim2.new(1, -12, 0, 88);
-			row.ZIndex = ZBase + 2;
-			row.LayoutOrder = i;
-			row.Parent = PresetList;
-
-			local rowCorner = Instance.new('UICorner');
-			rowCorner.CornerRadius = UDim.new(0, 10);
-			rowCorner.Parent = row;
-			local rowBorder = Instance.new('UIStroke');
-			rowBorder.Color = active and themeAccent or Color3.fromRGB(78, 81, 94);
-			rowBorder.Transparency = active and 0.15 or 0.58;
-			rowBorder.Thickness = active and 1.5 or 1;
-			rowBorder.Parent = row;
-
-			local accentLine = Instance.new('Frame');
-			accentLine.Name = 'AccentPreview';
-			accentLine.BackgroundColor3 = themeAccent;
-			accentLine.BorderSizePixel = 0;
-			accentLine.Size = UDim2.new(1, -20, 0, 4);
-			accentLine.Position = UDim2.fromOffset(10, 12);
-			accentLine.ZIndex = ZBase + 3;
-			accentLine.Parent = row;
-			local accentCorner = Instance.new('UICorner');
-			accentCorner.CornerRadius = UDim.new(1, 0);
-			accentCorner.Parent = accentLine;
-
-			local name = NewLabel(row, preset.Name or 'Custom', 13, Enum.TextXAlignment.Left, Color3.fromRGB(246, 247, 250));
-			name.Position = UDim2.fromOffset(10, 27);
-			name.Size = UDim2.new(1, -20, 0, 19);
-			name.TextTruncate = Enum.TextTruncate.AtEnd;
-			local sub = NewLabel(row, active and '●  ACTIVE PRESET' or 'CLICK TO APPLY', 10, Enum.TextXAlignment.Left, active and themeAccent or Color3.fromRGB(155, 159, 174));
-			sub.Position = UDim2.fromOffset(10, 55);
-			sub.Size = UDim2.new(1, -20, 0, 17);
-
-			NeverLose:CreateInput(row, function()
-				Akiwave.SetTheme(preset);
-				RefreshCurrentThemeBadge();
-				RefreshPresets();
-			end);
-		end;
-	end;
-
-	----------------------------------------------------------------
-	-- Save / delete / import / export
-	----------------------------------------------------------------
-	local NameHeader = NewRow(14);
-	local NameHeaderLabel = NewLabel(NameHeader, '02  /  SAVE & SHARE', 11);
-	NameHeaderLabel.TextColor3 = Color3.fromRGB(120, 120, 120);
-
-	local NameRow = NewRow(34);
-	local NameBox = NewTextBox(NameRow, 'Theme Name ...', UDim2.new(1, -162, 1, 0));
-
-	local SyncEditor;
-
-	local function NotifyMessage(text)
-		if NeverLose.__LogSystem then
-			NeverLose.__LogSystem.new('tag-sparkle', text, 3);
-		end;
-	end;
-
-	local SaveBtn, _, SaveInput = NewButton(NameRow, 'Save', UDim2.new(0, 68, 1, 0), function()
-		local ok, err = Akiwave.SaveTheme(NameBox.Text ~= '' and NameBox.Text or Akiwave.Current.Name);
-
-		if ok then
-			NotifyMessage('Theme saved: ' .. (NameBox.Text ~= '' and NameBox.Text or Akiwave.Current.Name));
-			RefreshPresets();
-		else
-			NotifyMessage('Save failed: ' .. tostring(err));
-		end;
-	end);
-
-	SaveBtn.Position = UDim2.new(1, -75, 0, 0);
-
-	local DeleteBtn, _, DeleteInput = NewButton(NameRow, 'Del', UDim2.new(0, 68, 1, 0), function()
-		local ok, err = Akiwave.DeleteTheme(NameBox.Text);
-
-		if ok then
-			NotifyMessage('Theme deleted: ' .. NameBox.Text);
-			RefreshPresets();
-		else
-			NotifyMessage('Delete failed: ' .. tostring(err));
-		end;
-	end);
-
-	DeleteBtn.Position = UDim2.new(1, -154, 0, 0);
-
-	local ImportRow = NewRow(34);
-	local ImportBox = NewTextBox(ImportRow, 'Paste theme JSON / base64 here ...', UDim2.new(1, 0, 1, 0));
-
-	local ActionRow = NewRow(34);
-
-	local ImportBtn, _, ImportInput = NewButton(ActionRow, 'Import', UDim2.new(0, 78, 1, 0), function()
-		local ok, err = Akiwave.ImportTheme(ImportBox.Text);
-
-		if ok then
-			NotifyMessage('Theme imported: ' .. Akiwave.Current.Name);
-			SyncEditor();
-			RefreshCurrentThemeBadge();
-			RefreshPresets();
-		else
-			NotifyMessage('Import failed: ' .. tostring(err));
-		end;
-	end);
-
-	local ExportBox; -- forward-declared for the Export button callback
-	local ExportBtn, _, ExportInput = NewButton(ActionRow, 'Export', UDim2.new(0, 78, 1, 0), function()
-		local data = Akiwave.ExportTheme();
-		ExportBox.Text = data;
-
-		pcall(function()
-			if setclipboard then
-				setclipboard(data);
-			elseif set_clipboard then
-				set_clipboard(data);
-			end;
-		end);
-
-		NotifyMessage('Theme exported');
-	end);
-
-	ExportBtn.Position = UDim2.new(0, 88, 0, 0);
-
-	local ExportRow = NewRow(34);
-	ExportBox = NewTextBox(ExportRow, 'Exported theme JSON appears here', UDim2.new(1, 0, 1, 0));
-
-	----------------------------------------------------------------
-	-- Color editor
-	----------------------------------------------------------------
-	local ColorHeader = NewRow(14);
-	local ColorHeaderLabel = NewLabel(ColorHeader, '03  /  COLORS', 11);
-	ColorHeaderLabel.TextColor3 = Color3.fromRGB(120, 120, 120);
-
-	local EditableRoles = { 'Accent', 'Background', 'Surface', 'Border', 'Text' };
-	local ColorRows = {};
-
-	-- HSV popup for live color editing
-	local Picker = Instance.new('Frame');
-	Picker.Name = NeverLose.RandomString();
-	Picker.AnchorPoint = Vector2.new(0.5, 0.5);
-	Picker.BackgroundColor3 = Color3.fromRGB(35, 35, 40);
-	Picker.BorderSizePixel = 0;
-	Picker.Position = UDim2.fromScale(0.5, 0.5);
-	Picker.Size = UDim2.fromOffset(230, 150);
-	Picker.ZIndex = 220;
-	Picker.Visible = false;
-	Picker.Parent = NeverLose.ScreenGui;
-
-	local PickerCorner = Instance.new('UICorner');
-	PickerCorner.CornerRadius = UDim.new(0, 0);
-	PickerCorner.Parent = Picker;
-
-	local PickerStroke = Instance.new('UIStroke');
-	PickerStroke.Transparency = 0.65;
-	PickerStroke.Color = Color3.fromRGB(45, 48, 58);
-	PickerStroke.Parent = Picker;
-
-	local PickerTitle = NewLabel(Picker, 'Edit Color', 11);
-	PickerTitle.Position = UDim2.new(0, 10, 0, 6);
-	PickerTitle.Size = UDim2.new(1, -60, 0, 14);
-	PickerTitle.ZIndex = 221;
-
-	local PickerPreview = Instance.new('Frame');
-	PickerPreview.Name = NeverLose.RandomString();
-	PickerPreview.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-	PickerPreview.BorderSizePixel = 0;
-	PickerPreview.Position = UDim2.new(1, -30, 0, 6);
-	PickerPreview.Size = UDim2.fromOffset(20, 14);
-	PickerPreview.ZIndex = 221;
-	PickerPreview.Parent = Picker;
-
-	local PickerClose = NewLabel(Picker, 'x', 12, Enum.TextXAlignment.Right);
-	PickerClose.Position = UDim2.new(1, -16, 0, 6);
-	PickerClose.Size = UDim2.fromOffset(10, 14);
-	PickerClose.ZIndex = 221;
-
-	local PickerRole = nil;
-	local PickerH, PickerS, PickerV = 0, 0, 1;
-
-	local function PickerApply()
-		if not PickerRole then
-			return;
-		end;
-
-		local c = Color3.fromHSV(PickerH, PickerS, PickerV);
-
-		Akiwave.Current.Palette[PickerRole] = c;
-		ColorRows[PickerRole].Swatch.BackgroundColor3 = c;
-		ColorRows[PickerRole].Hex.Text = c:ToHex();
-		PickerPreview.BackgroundColor3 = c;
-
-		if PickerRole == 'Accent' then
-			NeverLose.AccentColor = c;
-		end;
-
-		Akiwave.Apply();
-		Akiwave.UpdateLayers();
-	end;
-
-	local PickerSliders = {};
-
-	local function BuildPickerSlider(label, min, max, default, idx, cb)
-		local row = Instance.new('Frame');
-		row.Name = NeverLose.RandomString();
-		row.BackgroundTransparency = 1;
-		row.BorderSizePixel = 0;
-		row.Position = UDim2.new(0, 10, 0, 26 + (idx - 1) * 20);
-		row.Size = UDim2.new(1, -20, 0, 16);
-		row.ZIndex = 221;
-		row.Parent = Picker;
-
-		local lbl = NewLabel(row, label, 10);
-		lbl.Size = UDim2.fromOffset(18, 16);
-		lbl.ZIndex = 222;
-
-		local track = Instance.new('Frame');
-		track.Name = NeverLose.RandomString();
-		track.AnchorPoint = Vector2.new(0, 0.5);
-		track.BackgroundColor3 = Color3.fromRGB(30, 29, 36);
-		track.BorderSizePixel = 0;
-		track.Position = UDim2.new(0, 22, 0.5, 0);
-		track.Size = UDim2.new(1, -100, 0, 3);
-		track.ZIndex = 222;
-		track.Parent = row;
-
-		local fill = Instance.new('Frame');
-		fill.Name = NeverLose.RandomString();
-		fill.BackgroundColor3 = Color3.fromRGB(220, 220, 220);
-		fill.BorderSizePixel = 0;
-		fill.Size = UDim2.fromScale(0.5, 1);
-		fill.ZIndex = 223;
-		fill.Parent = track;
-
-		local handle = Instance.new('Frame');
-		handle.Name = NeverLose.RandomString();
-		handle.AnchorPoint = Vector2.new(0.5, 0.5);
-		handle.BackgroundColor3 = Color3.fromRGB(255, 255, 255);
-		handle.BorderSizePixel = 0;
-		handle.Position = UDim2.new(0.5, 0, 0.5, 0);
-		handle.Size = UDim2.fromOffset(8, 8);
-		handle.ZIndex = 224;
-		handle.Parent = fill;
-
-		local corner1 = Instance.new('UICorner');
-		corner1.CornerRadius = UDim.new(1, 0);
-		corner1.Parent = track;
-		local corner2 = Instance.new('UICorner');
-		corner2.CornerRadius = UDim.new(1, 0);
-		corner2.Parent = fill;
-		local corner3 = Instance.new('UICorner');
-		corner3.CornerRadius = UDim.new(1, 0);
-		corner3.Parent = handle;
-
-		local val = NewLabel(row, tostring(default), 10, Enum.TextXAlignment.Right);
-		val.AnchorPoint = Vector2.new(1, 0.5);
-		val.Position = UDim2.new(1, 0, 0.5, 0);
-		val.Size = UDim2.fromOffset(70, 16);
-		val.ZIndex = 222;
-
-		local dragging = false;
-
-		local function Set(value, fire)
-			value = math.clamp(tonumber(value) or min, min, max);
-			fill.Size = UDim2.fromScale((value - min) / (max - min), 1);
-			val.Text = string.format('%.2f', value);
-
-			if fire ~= false then
-				cb(value);
-			end;
-		end;
-
-		local function UpdateFrom(x)
-			local rel = (x - track.AbsolutePosition.X) / math.max(track.AbsoluteSize.X, 1);
-			Set(min + (max - min) * math.clamp(rel, 0, 1));
-		end;
-
-		track.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = true;
-				UpdateFrom(input.Position.X);
-			end;
-		end);
-
-		NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
-			if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-				UpdateFrom(input.Position.X);
-			end;
-		end));
-
-		NeverLose:AddSignal(UserInputService.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = false;
-			end;
-		end));
-
-		Set(default, false);
-
-		return { Set = Set };
-	end;
-
-	PickerSliders.H = BuildPickerSlider('H', 0, 360, 0, 1, function(v)
-		PickerH = v;
-		PickerApply();
-	end);
-
-	PickerSliders.S = BuildPickerSlider('S', 0, 1, 1, 2, function(v)
-		PickerS = v;
-		PickerApply();
-	end);
-
-	PickerSliders.V = BuildPickerSlider('V', 0, 1, 1, 3, function(v)
-		PickerV = v;
-		PickerApply();
-	end);
-
-	local PickerHex = NewTextBox(Picker, 'RRGGBB', UDim2.new(1, -20, 0, 16));
-	PickerHex.Position = UDim2.new(0, 10, 1, -22);
-	PickerHex.ZIndex = 222;
-
-	PickerHex.FocusLost:Connect(function(enter)
-		local c = HexToColor(PickerHex.Text);
-
-		if c and PickerRole then
-			PickerH, PickerS, PickerV = c:ToHSV();
-			PickerSliders.H.Set(PickerH, false);
-			PickerSliders.S.Set(PickerS, false);
-			PickerSliders.V.Set(PickerV, false);
-			PickerApply();
-		end;
-	end);
-
-	NeverLose:CreateInput(PickerClose, function()
-		Picker.Visible = false;
-	end);
-
-	local function OpenPicker(role)
-		PickerRole = role;
-
-		local c = Akiwave.Current.Palette[role];
-		PickerH, PickerS, PickerV = c:ToHSV();
-
-		PickerSliders.H.Set(PickerH, false);
-		PickerSliders.S.Set(PickerS, false);
-		PickerSliders.V.Set(PickerV, false);
-
-		PickerPreview.BackgroundColor3 = c;
-		ColorRows[role].Hex.Text = c:ToHex();
-
-		Picker.Visible = true;
-	end;
-
-	for _, role in next, EditableRoles do
-		local row = NewRow(32);
-
-		local label = NewLabel(row, role, 12);
-		label.Size = UDim2.fromOffset(90, 18);
-
-		local swatch = Instance.new('Frame');
-		swatch.Name = NeverLose.RandomString();
-		swatch.BackgroundColor3 = Akiwave.Current.Palette[role];
-		swatch.BorderSizePixel = 0;
-		swatch.Position = UDim2.new(0, 94, 0.5, 0);
-		swatch.Size = UDim2.fromOffset(22, 22);
-		swatch.ZIndex = ZBase + 3;
-		swatch.Parent = row;
-
-		local swatchCorner = Instance.new('UICorner');
-		swatchCorner.CornerRadius = UDim.new(0, 2);
-		swatchCorner.Parent = swatch;
-
-		local hex = NewTextBox(row, 'hex', UDim2.new(1, -132, 0, 28));
-		hex.Position = UDim2.new(0, 132, 0.5, -14);
-		hex.Text = Akiwave.Current.Palette[role]:ToHex();
-
-		hex.FocusLost:Connect(function(enter)
-			local c = HexToColor(hex.Text);
-
-			if c then
-				Akiwave.Current.Palette[role] = c;
-
-				if role == 'Accent' then
-					NeverLose.AccentColor = c;
-				end;
-
-				swatch.BackgroundColor3 = c;
-				Akiwave.Apply();
-				Akiwave.UpdateLayers();
-			else
-				hex.Text = Akiwave.Current.Palette[role]:ToHex();
-			end;
-		end);
-
-		NeverLose:CreateInput(swatch, function()
-			OpenPicker(role);
-		end);
-
-		ColorRows[role] = { Swatch = swatch, Hex = hex };
-	end;
-
-	SyncEditor = function()
-		for _, role in next, EditableRoles do
-			local c = Akiwave.Current.Palette[role];
-
-			ColorRows[role].Swatch.BackgroundColor3 = c;
-			ColorRows[role].Hex.Text = c:ToHex();
-		end;
-	end;
-
-	----------------------------------------------------------------
-	-- Anime image editor
-	----------------------------------------------------------------
-	local ImageHeader = NewRow(14);
-	local ImageHeaderLabel = NewLabel(ImageHeader, '04  /  CHARACTER ARTWORK', 11);
-	ImageHeaderLabel.TextColor3 = Color3.fromRGB(120, 120, 120);
-
-	local function ApplyImage(mutate)
-		if mutate then
-			mutate();
-		end;
-
-		Akiwave.UpdateLayers();
-	end;
-
-	local EnableRow = NewRow(34);
-	local EnableBtn, EnableLabel, EnableInput = NewButton(EnableRow, 'Image: Off', UDim2.new(1, 0, 1, 0), function()
-		ApplyImage(function()
-			Akiwave.Current.Image.Enabled = not Akiwave.Current.Image.Enabled;
-			EnableLabel.Text = 'Image: ' .. (Akiwave.Current.Image.Enabled and 'On' or 'Off');
-		end);
-	end);
-
-	local AssetRow = NewRow(34);
-	local AssetBox = NewTextBox(AssetRow, 'Anime image asset id (rbxassetid://...)', UDim2.new(1, 0, 1, 0));
-
-	local PositionRow = NewRow(34);
-
-	local PositionBtn, PositionLabel, PositionInput = NewButton(PositionRow, 'Position: Background', UDim2.new(1, 0, 1, 0), function()
-		ApplyImage(function()
-			local order = { 'Background', 'Left', 'Right' };
-			local nextPos = 'Background';
-
-			for i, pos in next, order do
-				if pos == Akiwave.Current.Image.Position then
-					nextPos = order[(i % #order) + 1];
-					break;
-				end;
-			end;
-
-			Akiwave.Current.Image.Position = nextPos;
-			PositionLabel.Text = 'Position: ' .. nextPos;
-		end);
-	end);
-
-	AssetBox.FocusLost:Connect(function(enter)
-		local asset = AssetBox.Text:gsub('^%s+', ''):gsub('%s+$', '');
-
-		if asset ~= '' then
-			if tonumber(asset) then
-				asset = 'rbxassetid://' .. asset;
-			end;
-
-			Akiwave.Current.Image.Asset = asset;
-			Akiwave.UpdateLayers();
-		end;
-	end);
-
-	local OpacitySlider = NewSlider(Content, 'Opacity', 0, 1, Akiwave.Current.Image.Opacity, 2, function(v)
-		Akiwave.Current.Image.Opacity = v;
-		Akiwave.UpdateLayers();
-	end);
-
-	local ScaleSlider = NewSlider(Content, 'Scale', 10, 200, Akiwave.Current.Image.Scale, 0, function(v)
-		Akiwave.Current.Image.Scale = v;
-		Akiwave.UpdateLayers();
-	end);
-
-	local OffsetXSlider = NewSlider(Content, 'Offset X', -100, 100, Akiwave.Current.Image.OffsetX, 0, function(v)
-		Akiwave.Current.Image.OffsetX = v;
-		Akiwave.UpdateLayers();
-	end);
-
-	local OffsetYSlider = NewSlider(Content, 'Offset Y', -100, 100, Akiwave.Current.Image.OffsetY, 0, function(v)
-		Akiwave.Current.Image.OffsetY = v;
-		Akiwave.UpdateLayers();
-	end);
-
-	----------------------------------------------------------------
-	-- Render
-	----------------------------------------------------------------
-	local ManagerSignal = NeverLose:CreateSignal(false);
-
-	ManagerSignal:Connect(function(value)
-		if value then
-			Root.Visible = true;
-			Shadow:Render(true);
-			Root.Position = UDim2.fromScale(0.5, 0.5);
-
-			EnableLabel.Text = 'Image: ' .. (Akiwave.Current.Image.Enabled and 'On' or 'Off');
-			PositionLabel.Text = 'Position: ' .. Akiwave.Current.Image.Position;
-			AssetBox.Text = Akiwave.Current.Image.Asset or '';
-
-			OpacitySlider.Set(Akiwave.Current.Image.Opacity, false);
-			ScaleSlider.Set(Akiwave.Current.Image.Scale, false);
-			OffsetXSlider.Set(Akiwave.Current.Image.OffsetX, false);
-			OffsetYSlider.Set(Akiwave.Current.Image.OffsetY, false);
-
-			SyncEditor();
-			RefreshCurrentThemeBadge();
-			RefreshPresets();
-
-			if Manager.UnsafeThread then
-				Manager.UnsafeThread:Disconnect();
-				Manager.UnsafeThread = nil;
-			end;
-
-			Manager.UnsafeThread = UserInputService.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-					if not NeverLose:IsMouseOverFrame(Root) and not NeverLose:IsMouseOverFrame(Picker) then
-						if Manager.UnsafeThread then
-							Manager.UnsafeThread:Disconnect();
-							Manager.UnsafeThread = nil;
-						end;
-
-						ManagerSignal:SetValue(false);
-					end;
-				end;
-			end);
-		else
-			Root.Visible = false;
-			Picker.Visible = false;
-			Shadow:Render(false);
-
-			if Manager.UnsafeThread then
-				Manager.UnsafeThread:Disconnect();
-				Manager.UnsafeThread = nil;
-			end;
-		end;
-	end);
-
-	function Manager.SetRender(value)
-		ManagerSignal:SetValue(value and true or false);
-	end;
-
-	Manager.Root = Root;
-	Manager.Signal = ManagerSignal;
-
-	Akiwave.ManagerCache = Manager;
-
-	return Manager;
+    if Akiwave.ManagerCache and Akiwave.ManagerCache.Root and Akiwave.ManagerCache.Root.Parent then
+        return Akiwave.ManagerCache;
+    end;
+
+    local Manager = {};
+    local Z = 205;
+    local palette = function(role) return Akiwave.GetColor(role); end;
+    local function contrast(color)
+        return color.R * 0.299 + color.G * 0.587 + color.B * 0.114 > 0.59 and Color3.fromRGB(18, 19, 26) or Color3.new(1, 1, 1);
+    end;
+    local paintBindings = {};
+    local function bind(obj, property, role)
+        table.insert(paintBindings, { Object = obj, Property = property, Role = role });
+        obj[property] = palette(role);
+        return obj;
+    end;
+    local function node(className, parent, name, properties)
+        local obj = Instance.new(className);
+        obj.Name = name;
+        if obj:IsA('GuiObject') then
+            obj.BorderSizePixel = 0;
+            obj.ZIndex = Z + 2;
+        end;
+        if properties then
+            for key, value in pairs(properties) do
+                obj[key] = value;
+            end;
+        end;
+        obj.Parent = parent;
+        return obj;
+    end;
+    local function round(frame, radius)
+        node('UICorner', frame, 'Rounded', { CornerRadius = UDim.new(0, radius or 10) });
+        return frame;
+    end;
+    local function border(frame, role, transparency)
+        local stroke = node('UIStroke', frame, 'Border', { Thickness = 1, Transparency = transparency or 0.5 });
+        bind(stroke, 'Color', role or 'Border');
+        return stroke;
+    end;
+    local function frame(parent, name, x, y, width, height, role, radius, stroke)
+        local f = node('Frame', parent, name, {
+            Position = UDim2.fromOffset(x,y),
+            Size = UDim2.fromOffset(width,height),
+            BackgroundTransparency = 0,
+        });
+        bind(f, 'BackgroundColor3', role or 'Surface');
+        if radius then round(f, radius); end;
+        if stroke then border(f, 'Border', 0.45); end;
+        return f;
+    end;
+    local function label(parent, name, value, x, y, width, height, fontSize, role, bold)
+        local t = node('TextLabel', parent, name, {
+            BackgroundTransparency = 1,
+            Text = value,
+            Font = bold and Enum.Font.GothamBold or Enum.Font.GothamMedium,
+            TextSize = fontSize or 13,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Center,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+            Position = UDim2.fromOffset(x,y),
+            Size = UDim2.fromOffset(width,height),
+        });
+        bind(t, 'TextColor3', role or 'Text');
+        return t;
+    end;
+    local function textBox(parent, name, placeholder, x, y, width, height, initial)
+        local b = node('TextBox', parent, name, {
+            Position = UDim2.fromOffset(x,y),
+            Size = UDim2.fromOffset(width,height),
+            Text = initial or '', PlaceholderText = placeholder,
+            ClearTextOnFocus = false,
+            Font = Enum.Font.GothamMedium,
+            TextSize = 12,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            BackgroundTransparency = 0.08,
+        });
+        bind(b, 'BackgroundColor3', 'Control');
+        bind(b, 'TextColor3', 'Text');
+        bind(b, 'PlaceholderColor3', 'TextMuted2');
+        round(b, 8); border(b, 'Border', 0.45);
+        node('UIPadding', b, 'Padding', { PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 8) });
+        return b;
+    end;
+    local function click(parent, name, value, x, y, width, height, callback, primary)
+        local b = node('TextButton', parent, name, {
+            Position = UDim2.fromOffset(x,y), Size = UDim2.fromOffset(width,height),
+            Text = value, Font = Enum.Font.GothamBold, TextSize = 12,
+            AutoButtonColor = false, BackgroundTransparency = 0.02,
+        });
+        bind(b, 'BackgroundColor3', primary and 'Accent' or 'Control');
+        if primary then
+            b.TextColor3 = contrast(palette('Accent'));
+        else
+            bind(b, 'TextColor3', 'Text');
+        end;
+        round(b, 8); border(b, 'Border', primary and 0.95 or 0.4);
+        NeverLose:AddSignal(b.MouseButton1Click:Connect(callback));
+        NeverLose:AddSignal(b.MouseEnter:Connect(function()
+            if not b.Parent then return end;
+            TweenService:Create(b, TweenInfo.new(0.14), { BackgroundTransparency = primary and 0.13 or 0.20 }):Play();
+        end));
+        NeverLose:AddSignal(b.MouseLeave:Connect(function()
+            if not b.Parent then return end;
+            TweenService:Create(b, TweenInfo.new(0.14), { BackgroundTransparency = 0.02 }):Play();
+        end));
+        return b;
+    end;
+
+    local Root = frame(NeverLose.ScreenGui,'AkiwaveThemeStudio',0,0,606,626,'Background',16,true);
+    Root.AnchorPoint = Vector2.new(0.5,0.5);
+    Root.Position = UDim2.fromScale(0.5,0.5);
+    Root.ZIndex = Z;
+    Root.BackgroundTransparency = 0.09;
+    Root.Visible = false;
+    Root.ClipsDescendants = true;
+    Root:SetAttribute('AkiwaveManaged', true);
+    local RootStroke = Root:FindFirstChild('Border');
+    if RootStroke then RootStroke.Transparency = 0.22; end;
+    local scale = node('UIScale',Root,'ResponsiveScale',{Scale=1});
+    local function fit()
+        local cam = workspace.CurrentCamera;
+        local sz = cam and cam.ViewportSize or Vector2.new(1280,720);
+        scale.Scale = math.clamp(math.min((sz.X-20)/606,(sz.Y-20)/626),0.42,1);
+    end;
+    fit();
+    if workspace.CurrentCamera then NeverLose:AddSignal(workspace.CurrentCamera:GetPropertyChangedSignal('ViewportSize'):Connect(fit)); end;
+    local Header = frame(Root,'Header',0,0,606,76,'Surface');
+    Header.ZIndex=Z+1;
+    local TopAccent = frame(Header,'AccentStripe',0,0,606,3,'Accent');
+    TopAccent.ZIndex=Z+4;
+    label(Header,'Brand','AKIWAVE',20,15,230,24,20,'Text',true);
+    label(Header,'Heading','THEME STUDIO  /  LIVE CUSTOMIZATION',21,43,440,17,10,'TextMuted2',true);
+    local Close = click(Header,'Close','×',550,18,38,35,function() if Manager.Signal then Manager.Signal:SetValue(false) end end);
+    Close.TextSize=21;
+    NeverLose.Drag(Header,Root,0.13);
+
+    local tabs = { 'PRESETS','APPEARANCE','ARTWORK','SETTINGS' };
+    local tabControls = {};
+    local views = {};
+    local currentTab = 'PRESETS';
+    for i, name in ipairs(tabs) do
+        tabControls[name] = click(Root,'View_'..name,name,16+(i-1)*145,89,137,39,function()
+            currentTab = name;
+            if Manager.Refresh then Manager.Refresh(); end;
+        end);
+        local view = node('ScrollingFrame', Root,'Pane_'..name, {
+            Position=UDim2.fromOffset(17,145), Size=UDim2.fromOffset(572,460),
+            BackgroundTransparency=1, BorderSizePixel=0, ScrollBarThickness=3,
+            ScrollBarImageColor3=palette('Accent'),
+            ScrollingDirection=Enum.ScrollingDirection.Y, CanvasSize=UDim2.new(0,0,0,0),
+            Visible=i==1, Active=true,
+        });
+        views[name]=view;
+    end;
+    local Status = label(Root,'Hint','Anime assets may require access in the current experience.',19,606,562,16,10,'TextMuted2');
+
+    local cards = {};
+    local hero = frame(views.PRESETS,'Hero',0,2,558,139,'Surface',13,true);
+    frame(hero,'HeroAccent',0,0,5,139,'Accent');
+    label(hero,'Label','SELECTED STYLE',20,14,215,17,10,'TextMuted2',true);
+    local HeroName = label(hero,'HeroTitle','MARIN MONOCHROME',19,38,305,30,21,'Text',true);
+    label(hero,'Hint','Theme colors + character artwork',20,75,295,19,11,'TextMuted2');
+    local HeroAccent = frame(hero,'HeroAccentDot',20,109,76,7,'Accent',4);
+    local HeroArtBox = frame(hero,'HeroArtBackdrop',376,9,173,120,'Card',10,true);
+    HeroArtBox.ClipsDescendants=true;
+    local HeroArt = node('ImageLabel',HeroArtBox,'HeroArtwork',{
+        Position=UDim2.fromOffset(0,0), Size=UDim2.fromScale(1,1),
+        BackgroundTransparency=1, Image='', ScaleType=Enum.ScaleType.Crop,
+        ImageTransparency=0.06, ZIndex=Z+4,
+    });
+    local HeroFallback = label(HeroArtBox,'NoArt','✦  ANIME ART',18,50,155,21,13,'TextMuted2',true);
+    HeroFallback.ZIndex=Z+3;
+    label(views.PRESETS,'LibraryLabel','CURATED PRESETS  /  CLICK TO APPLY',4,151,530,20,11,'TextMuted2',true);
+    for i, entry in ipairs(Akiwave.Presets) do
+        local x=((i-1)%2)*288;
+        local y=183+math.floor((i-1)/2)*128;
+        local tile = frame(views.PRESETS,'Preset_'..entry.Name,x,y,271,116,'Card',11,true);
+        local imgBG = frame(tile,'ArtSwatch',9,9,90,98,'Surface',8);
+        imgBG.ClipsDescendants=true;
+        local img = node('ImageLabel',imgBG,'Artwork',{
+            Size=UDim2.fromScale(1,1),BackgroundTransparency=1,
+            ScaleType=Enum.ScaleType.Crop,Image='',ZIndex=Z+4,
+        });
+        local fallback = label(imgBG,'Fallback','✦',32,31,30,32,24,'TextMuted2',true);
+        fallback.ZIndex=Z+3;
+        local tl = label(tile,'Name',entry.Name,109,17,150,23,13,'Text',true);
+        local sub = label(tile,'Subtitle','TAP TO APPLY',109,75,147,18,10,'TextMuted2');
+        local strip = frame(tile,'Swatch',109,53,81,5,'Accent',3);
+        local hit = node('TextButton',tile,'ApplyTheme',{
+            Size=UDim2.fromScale(1,1),BackgroundTransparency=1,
+            Text='',AutoButtonColor=false,ZIndex=Z+8,
+        });
+        NeverLose:AddSignal(hit.MouseButton1Click:Connect(function()
+            local ok, err = Akiwave.SetTheme(entry);
+            Status.Text=ok and ('Applied: '..entry.Name) or tostring(err);
+            if Manager.Refresh then Manager.Refresh(); end;
+        end));
+        table.insert(cards,{Preset=entry,Frame=tile,Border=tile:FindFirstChild('Border'),Image=img,Fallback=fallback,Subtitle=sub,Strip=strip,ArtBg=imgBG});
+    end;
+    views.PRESETS.CanvasSize=UDim2.fromOffset(0,183+math.ceil(#Akiwave.Presets/2)*128+12);
+
+    -- Appearance: edit semantic colors in place, plus translucent window settings.
+    label(views.APPEARANCE,'AppearanceHeading','COLORS & SURFACES',6,4,415,29,21,'Text',true);
+    label(views.APPEARANCE,'AppearanceHelp','Edit HEX values and press Enter to apply live.',6,35,543,19,12,'TextMuted2');
+    local editedColors={};
+    local roles={'Accent','Background','Surface','Panel','Card','Control','Border','Text'};
+    local customChanged;
+    for i, role in ipairs(roles) do
+        local x=((i-1)%2)*287;
+        local y=68+math.floor((i-1)/2)*77;
+        local tile=frame(views.APPEARANCE,'Color_'..role,x,y,270,67,'Card',10,true);
+        label(tile,role,12,8,132,18,12,'Text',true);
+        local swatch=frame(tile,'Swatch',224,12,31,31,'Accent',8,true);
+        local hex=textBox(tile,'Hex','RRGGBB',12,33,188,26,'');
+        NeverLose:AddSignal(hex.FocusLost:Connect(function()
+            local c=HexToColor(hex.Text);
+            if c then
+                Akiwave.Current.Palette[role]=c;
+                if role=='Accent' then NeverLose.AccentColor=c; end;
+                if customChanged then customChanged(); end;
+            else
+                hex.Text=Akiwave.Current.Palette[role]:ToHex();
+            end;
+        end));
+        editedColors[role]={Swatch=swatch,Hex=hex};
+    end;
+    click(views.APPEARANCE,'Harmonize','HARMONIZE ALL SURFACES',1,391,556,38,function()
+        local pal=Akiwave.Current.Palette;
+        local combined=BuildPalette(pal.Background,pal.Accent);
+        for role,color in pairs(combined) do
+            if role~='Text' then pal[role]=color; end;
+        end;
+        if customChanged then customChanged(); end;
+    end);
+    local opacityLabel=label(views.APPEARANCE,'OpacityTitle','WINDOW TRANSPARENCY',5,444,270,21,12,'Text',true);
+    local transValue=label(views.APPEARANCE,'OpacityValue','12%',496,445,56,21,12,'TextSub',true);
+    local transTrack=frame(views.APPEARANCE,'OpacityTrack',9,488,529,7,'Control',5);
+    local transFill=frame(transTrack,'Fill',0,0,100,7,'Accent',5);
+    local transKnob=frame(transTrack,'Handle',100,-5,17,17,'Accent',9);
+    local slideDragging=false;
+    local function setTrans(value)
+        value=math.clamp(value,0,0.65);
+        Akiwave.Current.WindowTransparency=value;
+        transValue.Text=string.format('%d%%',math.floor(value*100+0.5));
+        local alpha=value/0.65;
+        transFill.Size=UDim2.fromScale(alpha,1);
+        transKnob.Position=UDim2.new(alpha, -8,-0.72,0);
+        Akiwave.UpdateLayers();
+    end;
+    local function pointerX(input)
+        setTrans((input.Position.X-transTrack.AbsolutePosition.X)/math.max(transTrack.AbsoluteSize.X,1)*0.65);
+    end;
+    NeverLose:AddSignal(transTrack.InputBegan:Connect(function(input)
+        if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then slideDragging=true;pointerX(input);end;
+    end));
+    NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
+        if slideDragging and (input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch) then pointerX(input);end;
+    end));
+    NeverLose:AddSignal(UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then slideDragging=false;end;
+    end));
+    label(views.APPEARANCE,'TransparencyHint','Higher values show more of the game through the interface.',5,510,540,20,11,'TextMuted2');
+    views.APPEARANCE.CanvasSize=UDim2.fromOffset(0,546);
+
+    -- Artwork: visible image preview and a simple set of controls.
+    label(views.ARTWORK,'ArtworkHeading','CHARACTER ARTWORK',6,4,500,30,21,'Text',true);
+    label(views.ARTWORK,'ArtworkHelp','Uses Roblox image / decal asset IDs (availability varies by game).',6,35,554,20,11,'TextMuted2');
+    local artCanvas=frame(views.ARTWORK,'PreviewCanvas',4,70,552,165,'Surface',11,true);
+    artCanvas.ClipsDescendants=true;
+    local artImage=node('ImageLabel',artCanvas,'ArtworkPreview',{
+        Position=UDim2.fromScale(0.5,0.5),AnchorPoint=Vector2.new(0.5,0.5),
+        Size=UDim2.fromScale(0.96,0.96),Image='',ScaleType=Enum.ScaleType.Fit,
+        BackgroundTransparency=1,ImageTransparency=0.04,ZIndex=Z+4,
+    });
+    local artFallback=label(artCanvas,'ArtworkFallback','✦  ENTER AN IMAGE ASSET ID',104,71,340,24,15,'TextSub',true);
+    artFallback.ZIndex=Z+3;
+    local artAsset=textBox(views.ARTWORK,'ArtworkID','Paste asset ID or rbxassetid://...',4,248,430,37,'');
+    local artEnabled=true;
+    local applyArt;
+    local enabledButton=click(views.ARTWORK,'ArtworkToggle','IMAGE: ON',444,248,114,37,function()
+        Akiwave.Current.Image.Enabled=not Akiwave.Current.Image.Enabled;
+        if applyArt then applyArt(); end;
+    end);
+    local posButtons={};
+    label(views.ARTWORK,'ArtworkPosition','IMAGE POSITION',4,301,180,18,11,'TextMuted2',true);
+    local positions={'Background','Left','Right'};
+    for i,v in ipairs(positions) do
+        posButtons[v]=click(views.ARTWORK,'Position_'..v,v,4+(i-1)*187,324,178,35,function()
+            Akiwave.Current.Image.Position=v;
+            if applyArt then applyArt(); end;
+        end);
+    end;
+    local controls={};
+    local function sliderInfo(title,field,minimum,maximum,step,y)
+        label(views.ARTWORK,'Name_'..field,title,6,y,225,22,12,'Text',true);
+        local valueText=label(views.ARTWORK,'Value_'..field,'',475,y,74,22,12,'TextSub',true);
+        local track=frame(views.ARTWORK,'Track_'..field,10,y+32,522,7,'Control',4);
+        local fill=frame(track,'Fill',0,0,1,7,'Accent',4);
+        local knob=frame(track,'Knob',0,-5,16,16,'Accent',8);
+        local function setVal(value,commit)
+            value=math.clamp(tonumber(value) or minimum,minimum,maximum);
+            if step and step>0 then value=math.floor(value/step+0.5)*step;end;
+            local alpha=(value-minimum)/(maximum-minimum);
+            fill.Size=UDim2.fromScale(alpha,1);
+            knob.Position=UDim2.new(alpha,-7,0,-5);
+            valueText.Text=tostring(value)..(field=='Opacity' and '%' or field=='Scale' and '%' or ' px');
+            if commit then Akiwave.Current.Image[field]=field=='Opacity' and value/100 or value; if applyArt then applyArt(); end;end;
+        end;
+        local dragging=false;
+        local function pointer(input)
+            local alpha=math.clamp((input.Position.X-track.AbsolutePosition.X)/math.max(track.AbsoluteSize.X,1),0,1);
+            setVal(minimum+(maximum-minimum)*alpha,true);
+        end;
+        NeverLose:AddSignal(track.InputBegan:Connect(function(input)
+            if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then dragging=true;pointer(input);end;
+        end));
+        NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
+            if dragging and (input.UserInputType==Enum.UserInputType.MouseMovement or input.UserInputType==Enum.UserInputType.Touch) then pointer(input);end;
+        end));
+        NeverLose:AddSignal(UserInputService.InputEnded:Connect(function(input)
+            if input.UserInputType==Enum.UserInputType.MouseButton1 or input.UserInputType==Enum.UserInputType.Touch then dragging=false;end;
+        end));
+        controls[field]={Set=setVal};
+    end;
+    sliderInfo('IMAGE VISIBILITY','Opacity',0,100,1,375);
+    sliderInfo('IMAGE SCALE','Scale',40,200,1,455);
+    sliderInfo('HORIZONTAL OFFSET','OffsetX',-180,180,1,535);
+    sliderInfo('VERTICAL OFFSET','OffsetY',-180,180,1,615);
+    label(views.ARTWORK,'ArtWarning','If an asset is blocked by Roblox, upload one you own and enter its ID.',6,694,556,35,11,'TextMuted2');
+    views.ARTWORK.CanvasSize=UDim2.fromOffset(0,742);
+
+    applyArt=function()
+        local cfg=Akiwave.Current.Image;
+        artAsset.Text=cfg.Asset or '';
+        enabledButton.Text=cfg.Enabled and 'IMAGE: ON' or 'IMAGE: OFF';
+        Akiwave.SetArtwork(artImage,cfg.Asset or '');
+        artImage.Visible=cfg.Enabled and cfg.Asset~='';
+        artFallback.Visible=true;
+        artImage.ImageTransparency=1-math.clamp(cfg.Opacity or 0.55,0,1);
+        for name,b in pairs(posButtons) do
+            local active=cfg.Position==name;
+            b.BackgroundColor3=active and palette('Accent') or palette('Control');
+            b.TextColor3=active and contrast(palette('Accent')) or palette('Text');
+        end;
+        Akiwave.UpdateLayers();
+    end;
+    NeverLose:AddSignal(artAsset.FocusLost:Connect(function()
+        local input=artAsset.Text:gsub('^%s+',''):gsub('%s+$','');
+        local numeric=input:match('^%d+$') or input:match('/asset/(%d+)') or input:match('id=(%d+)');
+        if numeric then input='rbxassetid://'..numeric; end;
+        Akiwave.Current.Image.Asset=input;
+        if input~='' then Akiwave.Current.Image.Enabled=true;end;
+        applyArt();
+    end));
+
+    -- Settings: library-only lifecycle controls and config management.
+    label(views.SETTINGS,'SettingsHeading','LIBRARY SETTINGS',5,5,470,28,21,'Text',true);
+    local storageInfo=label(views.SETTINGS,'Storage','STORAGE',6,42,540,20,12,'TextMuted2');
+    label(views.SETTINGS,'SaveHeader','SAVE CUSTOM PRESET',6,86,490,18,11,'TextMuted2',true);
+    local nameInput=textBox(views.SETTINGS,'ThemeName','Theme name...',5,113,370,39,'');
+    click(views.SETTINGS,'SaveCustom','SAVE',384,113,173,39,function()
+        local ok,err=Akiwave.SaveTheme(nameInput.Text);
+        Status.Text=ok and ('Saved preset: '..nameInput.Text) or ('Save failed: '..tostring(err));
+    end,true);
+    click(views.SETTINGS,'DeleteCustom','DELETE SAVED PRESET',5,162,552,36,function()
+        local ok,err=Akiwave.DeleteTheme(nameInput.Text);
+        Status.Text=ok and ('Deleted preset: '..nameInput.Text) or ('Delete failed: '..tostring(err));
+    end);
+    label(views.SETTINGS,'ShareHeader','SHARE / BACK UP YOUR THEME',6,220,530,18,11,'TextMuted2',true);
+    local dataInput=textBox(views.SETTINGS,'ThemeJSON','Paste JSON or base64 theme...',5,246,552,75,'');
+    dataInput.MultiLine=true; dataInput.TextWrapped=true; dataInput.TextYAlignment=Enum.TextYAlignment.Top;
+    click(views.SETTINGS,'Import','IMPORT',5,332,272,37,function()
+        local ok,err=Akiwave.ImportTheme(dataInput.Text);
+        Status.Text=ok and ('Imported theme: '..Akiwave.Current.Name) or ('Import failed: '..tostring(err));
+        if ok and Manager.Refresh then Manager.Refresh();end;
+    end);
+    click(views.SETTINGS,'Export','EXPORT',285,332,272,37,function()
+        dataInput.Text=Akiwave.ExportTheme();
+        Status.Text='Theme JSON generated. Copy it from the field above.';
+    end);
+    label(views.SETTINGS,'UnloadTitle','SESSION CONTROLS',6,401,530,19,11,'TextMuted2',true);
+    local unloadConfirmAt=-math.huge;
+    local unloadButton;
+    unloadButton=click(views.SETTINGS,'Unload','UNLOAD GUI',5,434,552,47,function()
+        local now=os.clock();
+        if now-unloadConfirmAt>5 then
+            unloadConfirmAt=now;
+            unloadButton.Text='CONFIRM UNLOAD  /  CLICK AGAIN';
+            Status.Text='Click again within 5 seconds to remove this UI.';
+            return;
+        end;
+        -- Removes every window, overlay, theme studio and tracked connection.
+        NeverLose.UnloadEnabled=true;
+        task.defer(function() NeverLose:Unload(); end);
+    end);
+    unloadButton.BackgroundColor3=Color3.fromRGB(87,36,47);
+    unloadButton.TextColor3=Color3.fromRGB(255,201,210);
+    label(views.SETTINGS,'UnloadHint','Unloading affects only this library instance, not the Roblox game.',6,490,545,38,11,'TextMuted2');
+    views.SETTINGS.CanvasSize=UDim2.fromOffset(0,546);
+
+    customChanged=function()
+        Akiwave.Current.Name='Custom';
+        Akiwave.Apply();
+        Akiwave.UpdateLayers();
+        if Manager.Refresh then Manager.Refresh(); end;
+    end;
+    local function sync()
+        for name,tab in pairs(tabControls) do
+            local active=name==currentTab;
+            tab.BackgroundColor3=active and palette('Accent') or palette('Control');
+            tab.TextColor3=active and contrast(palette('Accent')) or palette('Text');
+            views[name].Visible=active;
+            views[name].ScrollBarImageColor3=palette('Accent');
+        end;
+        for _,binding in ipairs(paintBindings) do
+            local obj=binding.Object;
+            if obj.Parent then pcall(function() obj[binding.Property]=palette(binding.Role); end);end;
+        end;
+        TopAccent.BackgroundColor3=palette('Accent');
+        HeroAccent.BackgroundColor3=palette('Accent');
+        HeroName.Text=Akiwave.Current.Name;
+        local cfg=Akiwave.Current.Image;
+        Akiwave.SetArtwork(HeroArt,cfg.Asset or '');
+        HeroArt.Visible=cfg.Enabled and cfg.Asset~='';
+        HeroFallback.Visible=true;
+        for _,card in ipairs(cards) do
+            local entry=card.Preset;
+            local c=entry.Palette.Accent;
+            local current=entry.Name==Akiwave.Current.Name;
+            card.Frame.BackgroundColor3=entry.Palette.Card;
+            card.ArtBg.BackgroundColor3=entry.Palette.Surface;
+            card.Strip.BackgroundColor3=c;
+            card.Border.Color=current and c or palette('Border');
+            card.Border.Transparency=current and 0.08 or 0.48;
+            card.Subtitle.Text=current and '●  ACTIVE' or 'APPLY THEME';
+            card.Subtitle.TextColor3=current and c or palette('TextMuted2');
+            Akiwave.SetArtwork(card.Image,entry.Image.Asset or '');
+            card.Image.Visible=entry.Image.Enabled and entry.Image.Asset~='';
+            card.Fallback.Visible=true;
+        end;
+        for role,fields in pairs(editedColors) do
+            local col=Akiwave.Current.Palette[role];
+            fields.Hex.Text=col:ToHex();
+            fields.Swatch.BackgroundColor3=col;
+        end;
+        setTrans(Akiwave.Current.WindowTransparency or 0.21);
+        for field,obj in pairs(controls) do
+            local value=Akiwave.Current.Image[field];
+            obj.Set(field=='Opacity' and math.floor((value or 0.55)*100+0.5) or (value or 0),false);
+        end;
+        applyArt();
+        storageInfo.Text=Akiwave.FileAPI and 'Storage: persistent local files' or 'Storage: session only (file API unavailable)';
+        nameInput.Text=Akiwave.Current.Name;
+        if currentTab=='SETTINGS' then unloadConfirmAt=-math.huge;unloadButton.Text='UNLOAD GUI';end;
+        unloadButton.BackgroundColor3=Color3.fromRGB(87,36,47);
+        unloadButton.TextColor3=Color3.fromRGB(255,201,210);
+    end;
+    Manager.Refresh=sync;
+    Manager.SetRender=function(value) Manager.Signal:SetValue(value and true or false);end;
+    Manager.Root=Root;
+    Manager.Signal=NeverLose:CreateSignal(false);
+    Manager.Signal:Connect(function(value)
+        Root.Visible=value;
+        if value then sync();fit();end;
+    end);
+    Akiwave.ThemeChanged=Akiwave.ThemeChanged or NeverLose:CreateSignal(nil);
+    Akiwave.ThemeChanged:Connect(function() if Root.Visible then sync();end; end);
+    Akiwave.ManagerCache=Manager;
+    sync();
+    return Manager;
 end;
 
 function NeverLose:SetTheme(theme)
@@ -5555,8 +5143,8 @@ function NeverLose:CreateWindow(Config)
 	MainWindowCorner.Parent = WindowFrame;
 	local MainWindowBorder = Instance.new('UIStroke');
 	MainWindowBorder.ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
-	MainWindowBorder.Color = Color3.fromRGB(64, 67, 80);
-	MainWindowBorder.Transparency = 0.46;
+	MainWindowBorder.Color = Akiwave.GetColor('Accent');
+	MainWindowBorder.Transparency = 0.64;
 	MainWindowBorder.Thickness = 1;
 	MainWindowBorder.Parent = WindowFrame;
 
@@ -5596,7 +5184,7 @@ end;
 	Window.SetRender = LPH_NO_VIRTUALIZE(function(self , value)
 		if value then
 			NeverLose.PlayAnimate(WindowFrame , SlowyTween , {
-				BackgroundTransparency = 0,
+				BackgroundTransparency = Akiwave.Current.WindowTransparency or 0.21,
 				Size = Window.Size
 			})
 
@@ -5807,9 +5395,28 @@ end;
 	LeftMenuFrame.BackgroundTransparency = 1.000
 	LeftMenuFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LeftMenuFrame.BorderSizePixel = 0
-	LeftMenuFrame.Size = UDim2.new(0, 190, 1, 0)
+    LeftMenuFrame.Size = UDim2.new(0, 190, 1, 0)
+    local SidebarSurface=Instance.new('Frame');
+    SidebarSurface.Name='AkiwaveSidebarSurface';
+    SidebarSurface.BorderSizePixel=0;
+    SidebarSurface.BackgroundColor3=Akiwave.GetColor('Surface');
+    SidebarSurface.BackgroundTransparency=0.20;
+    SidebarSurface.Size=UDim2.fromScale(1,1);
+    SidebarSurface.ZIndex=2;
+    SidebarSurface.Parent=LeftMenuFrame;
+    local SidebarDivider=Instance.new('Frame');
+    SidebarDivider.Name='SidebarDivider';
+    SidebarDivider.BorderSizePixel=0;
+    SidebarDivider.BackgroundColor3=Akiwave.GetColor('Border');
+    SidebarDivider.BackgroundTransparency=0.25;
+    SidebarDivider.Position=UDim2.new(1,-1,0,0);
+    SidebarDivider.Size=UDim2.new(0,1,1,0);
+    SidebarDivider.ZIndex=7;
+    SidebarDivider.Parent=LeftMenuFrame;
+    Akiwave.BindColor(SidebarSurface,'BackgroundColor3','Surface');
+    Akiwave.BindColor(SidebarDivider,'BackgroundColor3','Border');
 
-	WindowName.Name = NeverLose.RandomString();
+    WindowName.Name = NeverLose.RandomString();
 	WindowName.Parent = LeftScrollingFrame
 	WindowName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	WindowName.BackgroundTransparency = 1.000
@@ -8375,23 +7982,22 @@ function NeverLose:CreateIndicator()
 end;
 
 function NeverLose:Unload()
-	if not NeverLose.UnloadEnabled then
-		return;
-	end;
-
-	NeverLose.ScreenGui:Destroy();
-
-	-- Akiwave: release theme engine resources (registry, layers, manager UI)
-	if NeverLose.Akiwave then
-		pcall(NeverLose.Akiwave.Destroy);
-	end;
-
-	for i,v in next , NeverLose.GlobalSignals do
-		pcall(v.Disconnect,v)
-	end;
+    if not NeverLose.UnloadEnabled then return false,'unload disabled';end;
+    -- Disconnect before destroying GUI: prevents signal callbacks while tearing down.
+    for _,connection in ipairs(NeverLose.GlobalSignals) do
+        pcall(function() connection:Disconnect(); end);
+    end;
+    table.clear(NeverLose.GlobalSignals);
+    if NeverLose.Akiwave then pcall(NeverLose.Akiwave.Destroy); end;
+    if NeverLose.ScreenGui then pcall(function() NeverLose.ScreenGui:Destroy(); end); end;
+    pcall(function()
+        local env=getgenv and getgenv() or _G;
+        if env.AkiwaveUI==NeverLose then env.AkiwaveUI=nil;end;
+    end);
+    return true;
 end;
 
--- Akiwave v3: optional shared access for executors that execute a whole file
+-- Akiwave v4: optional shared access for executors that execute a whole file
 -- as a chunk and ignore its return value. Does not create any demo tabs/windows.
 pcall(function()
     local env = getgenv and getgenv() or _G;
