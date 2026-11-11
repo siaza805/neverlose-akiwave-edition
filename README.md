@@ -2,7 +2,7 @@
 
 A reusable **Roblox Luau UI Library** based on the original Neverlose.cc UI Library (4lpaca; MIT). Preserves its window/tab/section/control API while adding anime presets, live color changes and a customizable Theme Studio.
 
-> **v4.0.0 preview.** Source is structurally reviewed, but has not been runtime-verified on every executor. Third-party Roblox artwork might be restricted in individual experiences.
+> **v4.1 preview.** Source is structurally reviewed, but has not been runtime-verified on every executor. Third-party Roblox artwork might be restricted in individual experiences.
 
 ## Features
 
@@ -10,7 +10,7 @@ A reusable **Roblox Luau UI Library** based on the original Neverlose.cc UI Libr
 - Settings gear opens a single Theme Studio with **PRESETS / APPEARANCE / ARTWORK / SETTINGS** views — no extra sidebar category.
 - Seven themes: Neverlose Default, Marin Monochrome, Gojo Violet, Frieren Forest, Zero Two Crimson, Nezuko Sakura and Cyberpunk Neon.
 - Palette recoloring of existing widgets, coherent surfaces, theme-aware chrome and a configurable glass-style window transparency.
-- Six anime presets reference Roblox Creator Store decal IDs, with a thumbnail fallback when images cannot load.
+- Six anime presets now include direct **HTTPS PNG/JPEG artwork URLs**. The library downloads image bytes, caches files and converts them using `getcustomasset` when supported. Roblox asset IDs remain fallbacks.
 - Editable HEX colors, automatic palette harmonization, image ID, position, opacity, scale and X/Y offsets.
 - JSON import/export, custom theme save/delete if native File API is present.
 - **Unload GUI** inside Theme Studio → Settings, requiring two clicks within five seconds.
@@ -85,11 +85,36 @@ UI:SetTheme({
 | `UI:GetTheme()` | Current theme as serializable data |
 | `UI.Akiwave.ExportTheme()` / `.ImportTheme(json)` | Share JSON theme |
 
+## External image URLs — v4.1
+
+The library cannot assign `https://...` directly to `ImageLabel.Image`. It calls an executor HTTP function (`request` or `game:HttpGet`), validates PNG/JPEG bytes (up to 6 MB), writes them under `AkiwaveArtworkCache/`, then obtains an asset URI through `getcustomasset` or `getsynasset`. Cached files avoid repeated downloads.
+
+To use your own image:
+
+```lua
+UI:SetTheme({
+    Name = "My URL Theme",
+    Palette = {Accent = "#D1BDFF"},
+    Image = {
+        Enabled = true,
+        Asset = "https://example.org/my-image.png",
+        Opacity = 0.55,
+        Position = "Right",
+        Scale = 100,
+        OffsetX = 0, OffsetY = 0
+    }
+})
+```
+
+The HTTPS image feature requires **actual filesystem APIs + `getcustomasset`**. Executors with only HTTP access cannot display arbitrary external files in Roblox `ImageLabel`. Without custom-asset support the library attempts the preset's Roblox Asset ID; such fallbacks may also be blocked by the experience. Check `UI.Akiwave.RemoteArtwork.Supported`. You can run [the artwork diagnostic](examples/artwork-test.luau).
+
+Direct CDN links can be blocked, changed, removed, or restricted by their hosts. The library does not bundle third-party pictures, and the source-code license does not grant rights to those pictures.
+
 ## Built-in artwork sources
 
-Artwork is linked, not bundled. Images may be blocked by permissions, moderation, or Roblox decal/image ID differences; a thumbnail fallback is attempted, but **visibility is not guaranteed**. Use an asset you have permission to use if a preset image does not show.
+Artwork is linked, not bundled. Each preset uses an external HTTPS image URL first and a Roblox Creator Store decal ID second. Either source may fail or change; **visibility is not guaranteed**. Use a hosted image you have permission to use for redistribution.
 
-| Preset | Decal listing |
+| Preset | Fallback Roblox decal |
 |---|---|
 | Marin Monochrome | [Marin Kitagawa](https://create.roblox.com/store/asset/14412105393) |
 | Gojo Violet | [Gojo Satoru](https://create.roblox.com/store/asset/16928679461) |
@@ -103,8 +128,8 @@ Artwork is linked, not bundled. Images may be blocked by permissions, moderation
 ## Compatibility & limitations
 
 - Roblox Luau, local UI APIs and permissions vary between clients and executors. No specific executor is guaranteed.
-- No File API? Theme changes work during the session, but custom theme files will not persist.
-- Always unload an older copy before running a newer one to avoid duplicate UIs.
+- No File API? Theme changes work during the session, but custom theme files will not persist, and HTTPS images cannot be converted into Roblox custom assets.
+- Always unload an older copy before running a newer one to avoid duplicate UIs. `loadstring(game:HttpGet(...))()` fetches the current GitHub source.
 - This library contains UI elements, not game-specific features or anti-cheat bypasses.
 
 ## License and credits
