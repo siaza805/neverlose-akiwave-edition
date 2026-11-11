@@ -1,4 +1,4 @@
--- Akiwave Edition v3 showcase. Run source.luau first or load it via raw GitHub URL.
+-- Akiwave Edition v4 showcase. Run source.luau first or load it via raw GitHub URL.
 local env = (getgenv and getgenv()) or _G
 local UI = assert(env.AkiwaveUI, "Please execute source.luau first")
 UI:SetTheme("Marin Monochrome")
