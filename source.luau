@@ -4988,16 +4988,17 @@ function NeverLose:CreateThemeManager()
         if Manager.Refresh then Manager.Refresh(); end;
     end;
     local function sync()
+        -- Apply base token colors first, then active-state overrides last.
+        for _,binding in ipairs(paintBindings) do
+            local obj=binding.Object;
+            if obj.Parent then pcall(function() obj[binding.Property]=palette(binding.Role); end);end;
+        end;
         for name,tab in pairs(tabControls) do
             local active=name==currentTab;
             tab.BackgroundColor3=active and palette('Accent') or palette('Control');
             tab.TextColor3=active and contrast(palette('Accent')) or palette('Text');
             views[name].Visible=active;
             views[name].ScrollBarImageColor3=palette('Accent');
-        end;
-        for _,binding in ipairs(paintBindings) do
-            local obj=binding.Object;
-            if obj.Parent then pcall(function() obj[binding.Property]=palette(binding.Role); end);end;
         end;
         TopAccent.BackgroundColor3=palette('Accent');
         HeroAccent.BackgroundColor3=palette('Accent');
