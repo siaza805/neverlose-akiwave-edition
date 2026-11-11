@@ -125,6 +125,21 @@ Artwork is linked, not bundled. Each preset uses an external HTTPS image URL fir
 
 **Marin Monochrome** refers to the UI's monochrome palette; the source decal itself may be colored.
 
+## Remote preset image references
+
+The following third-party HTTPS URLs are *referenced* by the preset configurations (no binary images are stored in this repository). Their availability and licensing are outside this project's control:
+
+| Preset | External host / reference |
+|---|---|
+| Marin Monochrome | [Anime Icons / Rafled CDN](https://anime-icons.com/picture/26) |
+| Gojo Violet | [Wallpics](https://wallpics.app/profile-picture/1433) |
+| Frieren Forest | [Anime Icons / Rafled CDN](https://anime-icons.com/picture/26246) |
+| Zero Two Crimson | [PFP Town](https://pfptown.com/zero-two-pfp) |
+| Nezuko Sakura | [PFP Town](https://pfptown.com/nezuko-pfp) |
+| Cyberpunk Neon | [UHD Paper](https://www.uhdpaper.com/2022/05/lucy-cyberpunk-edgerunners-4k-6381i.html) |
+
+These sources may show copyrighted anime characters or unlicensed fan art. **The MIT license applies to code only, not third-party images.** For redistribution, substitute images you own or have permission to use.
+
 ## Compatibility & limitations
 
 - Roblox Luau, local UI APIs and permissions vary between clients and executors. No specific executor is guaranteed.
