@@ -1,5 +1,5 @@
 --[[
-    Neverlose UI Library — Akiwave Edition v5.1 Preview (color-only / Settings repair)
+    Neverlose UI Library — Akiwave Edition v5.2 Preview (stable drag / visual refinement)
     Original Neverlose.cc Library by 4lpaca (MIT).
     Extends the original public API; never auto-generates sample windows/tabs.
     GUI creation is performed by calling :CreateWindow() in your own script.
@@ -354,7 +354,7 @@ local THEME_ATTRIBUTE = 'AkiwaveThemed';
 local WHITE = Color3.new(1, 1, 1);
 local BLACK = Color3.new(0, 0, 0);
 
-Akiwave.Version = '5.1.0-preview';
+Akiwave.Version = '5.2.0';
 
 -- File API capability check: theme switching stays available even when
 -- the runtime cannot write files (session-only mode).
@@ -1618,52 +1618,73 @@ NeverLose.PlayAnimate = LPH_NO_VIRTUALIZE(function(Self , Info , Property)
 	return Tween;
 end);
 
-NeverLose.Drag = LPH_NO_VIRTUALIZE(function(InputFrame: Frame, MoveFrame: Frame, Speed : number)
-	local dragToggle: boolean = false;
-	local dragStart: Vector3 = nil;
-	local startPos: UDim2 = nil;
-	local Tween = TweenInfo.new(Speed);
+-- Akiwave v5.2: deterministic pointer capture; a click never changes position.
+NeverLose.Drag = LPH_NO_VIRTUALIZE(function(InputFrame: Frame, MoveFrame: Frame, _Speed : number, ExcludeRightPx: number?)
+    InputFrame.Active=true;
+    local dragging=false;
+    local beganInput=nil;
+    local pointerStart=nil;
+    local positionStart=nil;
+    local absoluteStart=nil;
+    local dead=false;
+    local activated=false;
+    local threshold=6;
+    ExcludeRightPx=ExcludeRightPx or 0;
 
-	local updateInput = function(input)
-		local delta = input.Position - dragStart;
-		local position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
-			startPos.Y.Scale, startPos.Y.Offset + delta.Y);
+    local function finish()
+        dragging=false;
+        activated=false;
+        beganInput=nil;
+    end;
 
-		if NeverLose.Global3DRenderMode then
-			NeverLose.PlayAnimate(MoveFrame,Tween,{
-				Position = UDim2.fromScale(0.5,0.5)
-			});
-		else
-			NeverLose.PlayAnimate(MoveFrame,Tween,{
-				Position = position
-			});
-		end;
-	end;
+    local function update(input)
+        if not dragging or dead or not MoveFrame.Parent or not pointerStart then return; end;
+        if NeverLose.Global3DRenderMode then return; end;
+        local delta=input.Position-pointerStart;
+        local dx,dy=delta.X,delta.Y;
+        if not activated and dx*dx+dy*dy < threshold*threshold then return; end;
+        activated=true;
+        local camera=workspace.CurrentCamera;
+        local viewport=camera and camera.ViewportSize or Vector2.new(1280,720);
+        local size=MoveFrame.AbsoluteSize;
+        local left=math.clamp(absoluteStart.X+dx,0,math.max(0,viewport.X-size.X));
+        local top=math.clamp(absoluteStart.Y+dy,0,math.max(0,viewport.Y-size.Y));
+        MoveFrame.Position=UDim2.new(
+            positionStart.X.Scale,positionStart.X.Offset+(left-absoluteStart.X),
+            positionStart.Y.Scale,positionStart.Y.Offset+(top-absoluteStart.Y)
+        );
+    end;
 
-	NeverLose:AddSignal(InputFrame.InputBegan:Connect(function(input)
-		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
-			dragToggle = true;
-			dragStart = input.Position;
-			startPos = MoveFrame.Position;
+    NeverLose:AddSignal(InputFrame.InputBegan:Connect(function(input)
+        if dead or dragging or not MoveFrame.Parent or NeverLose.Global3DRenderMode then return;end;
+        local kind=input.UserInputType;
+        if kind~=Enum.UserInputType.MouseButton1 and kind~=Enum.UserInputType.Touch then return;end;
+        if ExcludeRightPx>0 and input.Position.X>=InputFrame.AbsolutePosition.X+InputFrame.AbsoluteSize.X-ExcludeRightPx then return;end;
+        dragging=true;
+        activated=false;
+        beganInput=input;
+        pointerStart=input.Position;
+        positionStart=MoveFrame.Position;
+        absoluteStart=MoveFrame.AbsolutePosition;
+    end));
 
-			local input_end;
-			input_end = input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragToggle = false;
+    NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
+        if not dragging then return;end;
+        if beganInput and beganInput.UserInputType==Enum.UserInputType.Touch then
+            if input==beganInput then update(input);end;
+        elseif input.UserInputType==Enum.UserInputType.MouseMovement then
+            update(input);
+        end;
+    end));
 
-					input_end:Disconnect();
-				end
-			end)
-		end
-	end));
-
-	NeverLose:AddSignal(UserInputService.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			if dragToggle then
-				updateInput(input)
-			end
-		end
-	end));
+    NeverLose:AddSignal(UserInputService.InputEnded:Connect(function(input)
+        if not dragging then return;end;
+        if input==beganInput or (beganInput and beganInput.UserInputType==Enum.UserInputType.MouseButton1
+            and input.UserInputType==Enum.UserInputType.MouseButton1) then
+            finish();
+        end;
+    end));
+    NeverLose:AddSignal(MoveFrame.Destroying:Connect(function()dead=true;finish();end));
 end);
 
 NeverLose.Rounding = LPH_NO_VIRTUALIZE(function(num, numDecimalPlaces)
@@ -4103,7 +4124,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedFrame.BackgroundTransparency = 1.000
 		BasedFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedFrame.BorderSizePixel = 0
-		BasedFrame.Size = UDim2.new(1, 0, 0, 31) -- v3: touch-friendly, legible control row
+		BasedFrame.Size = UDim2.new(1, 0, 0, 37) -- v5.2: readable 37px control rows
 		BasedFrame.ZIndex = LayerIndex + 8
 
 		NeverLose:AddQuery(BasedFrame , Name);
@@ -4114,8 +4135,9 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedLabel.BackgroundTransparency = 1.000
 		BasedLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedLabel.BorderSizePixel = 0
-		BasedLabel.Position = UDim2.new(0, 14, 0, 8)
-		BasedLabel.Size = UDim2.new(0,1, 0, 15)
+		BasedLabel.Position = UDim2.new(0, 13, 0, 11)
+		BasedLabel.Size = UDim2.new(1,-144, 0, 19)
+        BasedLabel.TextTruncate = Enum.TextTruncate.AtEnd
 		BasedLabel.ZIndex = LayerIndex + 9
 		BasedLabel.Font = Enum.Font.GothamMedium
 		BasedLabel.Text = Name
@@ -4131,8 +4153,8 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedHandler.BackgroundTransparency = 1.000
 		BasedHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedHandler.BorderSizePixel = 0
-		BasedHandler.Position = UDim2.new(1, -13, 0, 3)
-		BasedHandler.Size = UDim2.new(0, 114, 0, 25) -- v3: space for sliders/dropdowns
+		BasedHandler.Position = UDim2.new(1, -12, 0, 6)
+		BasedHandler.Size = UDim2.new(0, 124, 0, 27) -- v5.2: comfortable controls
 		BasedHandler.ZIndex = LayerIndex + 12
 
 		UIListLayout.Parent = BasedHandler
@@ -4198,7 +4220,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 	-- Subtle hover; does not interfere with callbacks or input overlays.
 	NeverLose:AddSignal(BasedFrame.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
 		NeverLose.PlayAnimate(BasedFrame , SlowyTween , {
-			BackgroundTransparency = 0.35
+			BackgroundTransparency = 0.72
 		});
 
 		NeverLose.PlayAnimate(BasedLabel , SlowyTween , {
@@ -4261,7 +4283,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		ButtonFrame.BackgroundTransparency = 1.000
 		ButtonFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ButtonFrame.BorderSizePixel = 0
-		ButtonFrame.Size = UDim2.new(1, 0, 0, 30)
+		ButtonFrame.Size = UDim2.new(1, 0, 0, 38)
 		ButtonFrame.ZIndex = LayerIndex + 8
 
 		BasedLabel.Name = NeverLose.RandomString();
@@ -4270,7 +4292,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedLabel.BackgroundTransparency = 1.000
 		BasedLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedLabel.BorderSizePixel = 0
-		BasedLabel.Position = UDim2.new(0, 35, 0, 6)
+		BasedLabel.Position = UDim2.new(0, 38, 0, 11)
 		BasedLabel.Size = UDim2.new(1, -100, 0, 15) -- Leave room for controls
 		BasedLabel.ZIndex = LayerIndex + 9
 		BasedLabel.Font = Enum.Font.GothamMedium
@@ -4300,7 +4322,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		Icon.BackgroundTransparency = 1.000
 		Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		Icon.BorderSizePixel = 0
-		Icon.Position = UDim2.new(0, 11, 0, 5)
+		Icon.Position = UDim2.new(0, 12, 0, 10)
 		Icon.Size = UDim2.new(0, 18, 0, 18)
 		Icon.ZIndex = LayerIndex + 9
 		Icon.FontFace = NeverLose.BuiltInBold
@@ -4628,7 +4650,7 @@ function NeverLose:CreateThemeManager()
     local function close() Manager.SetRender(false); end;
     local closeBtn=button(Header,'Close','×',493,16,38,35,close);
     closeBtn.TextSize=20;
-    NeverLose.Drag(Header,Root,0.12);
+    NeverLose.Drag(Header,Root,0,64);
 
     local ThemeTab;
     local SettingsTab;
@@ -4656,8 +4678,12 @@ function NeverLose:CreateThemeManager()
         local tile=panel(ThemePage,'Preset_'..entry.Name,x,y,251,69,entry.Palette.Card,9);
         local border=stroke(tile,c);
         local bar=panel(tile,'Accent',11,11,4,45,c,2);
-        local name=label(tile,'Name',entry.Name,23,10,215,21,13,entry.Palette.Text,true);
-        local sub=label(tile,'State','APPLY PALETTE',23,35,205,19,10,entry.Palette.TextMuted2);
+        local name=label(tile,'Name',entry.Name,23,10,206,21,13,entry.Palette.Text,true);
+        local sub=label(tile,'State','APPLY PALETTE',23,35,155,19,10,entry.Palette.TextMuted2);
+        for j,shade in ipairs({entry.Palette.Accent,entry.Palette.Surface,entry.Palette.Control}) do
+            local dot=panel(tile,'Swatch_'..j,166+(j-1)*23,41,15,15,shade,7);
+            stroke(dot,entry.Palette.Border);
+        end;
         local hit=make('TextButton',tile,'Apply',{
             BackgroundTransparency=1,Size=UDim2.fromScale(1,1),
             Text='',AutoButtonColor=false,Active=true,Selectable=true,
@@ -4748,7 +4774,7 @@ function NeverLose:CreateThemeManager()
         for _,tab in ipairs({{B=ThemeTab,Page='THEMES'}, {B=SettingsTab,Page='SETTINGS'}}) do
             local active=currentPage==tab.Page;
             tab.B.BackgroundColor3=active and palette('Accent') or palette('Control');
-            tab.B.TextColor3=active and Color3.fromRGB(16,16,20) or palette('Text');
+            tab.B.TextColor3=active and (palette('Accent').R*0.299+palette('Accent').G*0.587+palette('Accent').B*0.114>0.52 and Color3.fromRGB(16,16,20) or Color3.fromRGB(248,248,250)) or palette('Text');
         end;
         for _,entry in ipairs(themeButtons) do
             local active=entry.Entry.Name==Akiwave.Current.Name;
@@ -4761,7 +4787,7 @@ function NeverLose:CreateThemeManager()
         for _,op in ipairs(opacityButtons) do
             local active=math.abs((Akiwave.Current.WindowTransparency or 0)*100-op.Percent)<1;
             op.Button.BackgroundColor3=active and palette('Accent') or palette('Control');
-            op.Button.TextColor3=active and Color3.fromRGB(16,16,20) or palette('Text');
+            op.Button.TextColor3=active and (palette('Accent').R*0.299+palette('Accent').G*0.587+palette('Accent').B*0.114>0.52 and Color3.fromRGB(16,16,20) or Color3.fromRGB(248,248,250)) or palette('Text');
         end;
         Root:FindFirstChild('Stroke').Color=palette('Accent');
         ThemePage.Visible=currentPage=='THEMES';
@@ -4871,12 +4897,12 @@ function NeverLose:CreateWindow(Config)
 
 	-- Akiwave v3: rounded shell, subtle border and responsive content size.
 	local MainWindowCorner = Instance.new('UICorner');
-	MainWindowCorner.CornerRadius = UDim.new(0, 12);
+	MainWindowCorner.CornerRadius = UDim.new(0, 14);
 	MainWindowCorner.Parent = WindowFrame;
 	local MainWindowBorder = Instance.new('UIStroke');
 	MainWindowBorder.ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
 	MainWindowBorder.Color = Akiwave.GetColor('Accent');
-	MainWindowBorder.Transparency = 0.64;
+	MainWindowBorder.Transparency = 0.74;
 	MainWindowBorder.Thickness = 1;
 	MainWindowBorder.Parent = WindowFrame;
 	Akiwave.BindColor(MainWindowBorder,'Color','Accent');
@@ -5126,7 +5152,7 @@ end;
 		Frame.ZIndex = 7
 		Frame.BackgroundTransparency = 1;
 
-		NeverLose.Drag(Frame , WindowFrame , 0.15)
+		NeverLose.Drag(Frame , WindowFrame , 0,164)
 	end
 
 	LeftMenuFrame.Name = NeverLose.RandomString();
@@ -5135,12 +5161,12 @@ end;
 	LeftMenuFrame.BackgroundTransparency = 1.000
 	LeftMenuFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LeftMenuFrame.BorderSizePixel = 0
-    LeftMenuFrame.Size = UDim2.new(0, 190, 1, 0)
+    LeftMenuFrame.Size = UDim2.new(0, 202, 1, 0)
     local SidebarSurface=Instance.new('Frame');
     SidebarSurface.Name='AkiwaveSidebarSurface';
     SidebarSurface.BorderSizePixel=0;
     SidebarSurface.BackgroundColor3=Akiwave.GetColor('Surface');
-    SidebarSurface.BackgroundTransparency=0.20;
+    SidebarSurface.BackgroundTransparency=0.04;
     SidebarSurface.Size=UDim2.fromScale(1,1);
     SidebarSurface.ZIndex=2;
     SidebarSurface.Parent=LeftMenuFrame;
@@ -5155,6 +5181,16 @@ end;
     SidebarDivider.Parent=LeftMenuFrame;
     Akiwave.BindColor(SidebarSurface,'BackgroundColor3','Surface');
     Akiwave.BindColor(SidebarDivider,'BackgroundColor3','Border');
+    local SidebarGlow=Instance.new('Frame');
+    SidebarGlow.Name='AkiwaveSidebarTopAccent';
+    SidebarGlow.BorderSizePixel=0;
+    SidebarGlow.BackgroundColor3=Akiwave.GetColor('Accent');
+    SidebarGlow.BackgroundTransparency=0.15;
+    SidebarGlow.Size=UDim2.new(1,0,0,2);
+    SidebarGlow.ZIndex=8;
+    SidebarGlow.Active=false;
+    SidebarGlow.Parent=LeftMenuFrame;
+    Akiwave.BindColor(SidebarGlow,'BackgroundColor3','Accent');
 
     WindowName.Name = NeverLose.RandomString();
 	WindowName.Parent = LeftScrollingFrame
@@ -5163,7 +5199,7 @@ end;
 	WindowName.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	WindowName.BorderSizePixel = 0
 	WindowName.Position = UDim2.new(0, 10, 0, 10)
-	WindowName.TextSize = 17.000
+	WindowName.TextSize = 18.000
 	WindowName.Size = UDim2.new(1, -16, 0, 28)
 	WindowName.ZIndex = 7
 	WindowName.Font = Enum.Font.GothamBold
@@ -5206,15 +5242,15 @@ end;
 	LeftScrollingFrame.BackgroundTransparency = 1.000
 	LeftScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	LeftScrollingFrame.BorderSizePixel = 0
-	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 10)
-	LeftScrollingFrame.Size = UDim2.new(1, -10, 1, -74)
+	LeftScrollingFrame.Position = UDim2.new(0.5, 0, 0, 13)
+	LeftScrollingFrame.Size = UDim2.new(1, -18, 1, -78)
 	LeftScrollingFrame.ZIndex = 7
 	LeftScrollingFrame.ScrollBarThickness = 0
 
 	UIListLayout.Parent = LeftScrollingFrame
 	UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	UIListLayout.Padding = UDim.new(0, 5)
+	UIListLayout.Padding = UDim.new(0, 6)
 
 	NeverLose:AddSignal(UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 		LeftScrollingFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y + 1)
@@ -5324,8 +5360,8 @@ end;
 	RightMenuFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	RightMenuFrame.BorderSizePixel = 0
 	RightMenuFrame.ClipsDescendants = true
-	RightMenuFrame.Position = UDim2.new(0, 191, 0, 0)
-	RightMenuFrame.Size = UDim2.new(1, -191, 1, 0)
+	RightMenuFrame.Position = UDim2.new(0, 203, 0, 0)
+	RightMenuFrame.Size = UDim2.new(1, -203, 1, 0)
 	RightMenuFrame.ZIndex = 8
 
 	UIStroke.Transparency = 0.650
@@ -5338,11 +5374,25 @@ end;
 	RightHeader.Name = NeverLose.RandomString();
 	RightHeader.Parent = RightMenuFrame
 	RightHeader.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	RightHeader.BackgroundTransparency = 1.000
+	RightHeader.BackgroundTransparency = 0.0
+    RightHeader.BackgroundColor3=Akiwave.GetColor('Panel');
+    Akiwave.BindColor(RightHeader,'BackgroundColor3','Panel')
 	RightHeader.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	RightHeader.BorderSizePixel = 0
-	RightHeader.Size = UDim2.new(1, 0, 0, 56)
+	RightHeader.Size = UDim2.new(1, 0, 0, 59)
 	RightHeader.ZIndex = 9
+
+    local TopAccent=Instance.new('Frame');
+    TopAccent.Name='AkiwaveHeaderUnderline';
+    TopAccent.BorderSizePixel=0;
+    TopAccent.BackgroundColor3=Akiwave.GetColor('Accent');
+    TopAccent.BackgroundTransparency=0.30;
+    TopAccent.Position=UDim2.new(0,0,1,-2);
+    TopAccent.Size=UDim2.new(1,0,0,2);
+    TopAccent.ZIndex=10;
+    TopAccent.Active=false;
+    TopAccent.Parent=RightHeader;
+    Akiwave.BindColor(TopAccent,'BackgroundColor3','Accent');
 
 	LineFrame_3.Name = NeverLose.RandomString();
 	LineFrame_3.Parent = RightHeader
@@ -5487,8 +5537,8 @@ end;
 	TabContainer.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	TabContainer.BorderSizePixel = 0
 	TabContainer.ClipsDescendants = true
-	TabContainer.Position = UDim2.new(0, 0, 0, 56)
-	TabContainer.Size = UDim2.new(1, 0, 1, -56)
+	TabContainer.Position = UDim2.new(0, 0, 0, 60)
+	TabContainer.Size = UDim2.new(1, 0, 1, -60)
 	TabContainer.ZIndex = 5
 
 	do
@@ -5744,11 +5794,25 @@ end;
 		TabButton.BackgroundTransparency = 1
 		TabButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TabButton.BorderSizePixel = 0
-		TabButton.Size = UDim2.new(1, -4, 0, 39)
+		TabButton.Size = UDim2.new(1, -4, 0, 43)
 		TabButton.ZIndex = 8
 
-		UICorner.CornerRadius = UDim.new(0, 8)
+		UICorner.CornerRadius = UDim.new(0, 9)
 		UICorner.Parent = TabButton
+
+        local SelectedRail=Instance.new('Frame');
+        SelectedRail.Name='AkiwaveSelectedRail';
+        SelectedRail.BackgroundColor3=Akiwave.GetColor('Accent');
+        SelectedRail.BorderSizePixel=0;
+        SelectedRail.Position=UDim2.new(0,0,0.5,-10);
+        SelectedRail.Size=UDim2.fromOffset(3,20);
+        SelectedRail.ZIndex=10;
+        SelectedRail.Visible=false;
+        SelectedRail.Parent=TabButton;
+        local railCorner=Instance.new('UICorner');
+        railCorner.CornerRadius=UDim.new(1,0);
+        railCorner.Parent=SelectedRail;
+        Akiwave.BindColor(SelectedRail,'BackgroundColor3','Accent');
 
 		TabIcon.Name = NeverLose.RandomString();
 		TabIcon.Parent = TabButton
@@ -5809,8 +5873,8 @@ end;
 		LeftScroll.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		LeftScroll.BorderSizePixel = 0
 		LeftScroll.ClipsDescendants = false
-		LeftScroll.Position = UDim2.new(0.25, 0, 0.5, 0)
-		LeftScroll.Size = UDim2.new(0.5, 0, 1, -5)
+		LeftScroll.Position = UDim2.new(0.25, -5, 0.5, 4)
+		LeftScroll.Size = UDim2.new(0.5, -19, 1, -14)
 		LeftScroll.ScrollBarThickness = 0
 
 		UIListLayout.Parent = LeftScroll
@@ -5831,8 +5895,8 @@ end;
 		RightScroll.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		RightScroll.BorderSizePixel = 0
 		RightScroll.ClipsDescendants = false
-		RightScroll.Position = UDim2.new(0.75, 0, 0.5, 0)
-		RightScroll.Size = UDim2.new(0.5, 0, 1, -5)
+		RightScroll.Position = UDim2.new(0.75, 5, 0.5, 4)
+		RightScroll.Size = UDim2.new(0.5, -19, 1, -14)
 		RightScroll.ScrollBarThickness = 0
 
 		UIListLayout_2.Parent = RightScroll
@@ -5844,7 +5908,7 @@ end;
 			RightScroll:Destroy();
 			RightScroll = LeftScroll;
 			UIListLayout_2 = UIListLayout;
-			LeftScroll.Size = UDim2.new(1, 0, 1, -5);
+			LeftScroll.Size = UDim2.new(1, -22, 1, -14);
 			LeftScroll.Position = UDim2.new(0.5, 0, 0.5, 0)
 		else
 			NeverLose:AddSignal(UIListLayout_2:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
@@ -5868,10 +5932,11 @@ end;
 
 		Tab.SetValue = LPH_NO_VIRTUALIZE(function(value)
 			Tab.Signal:SetValue(value);
+            SelectedRail.Visible=value;
 
 			if value then
 				NeverLose.PlayAnimate(TabButton , SlowyTween , {
-					BackgroundTransparency = 0.1 -- Very subtle highlight
+					BackgroundTransparency = 0.28 -- Distinct selected tab surface
 				})
 
 				NeverLose.PlayAnimate(TabIcon , SlowyTween , {
@@ -5998,7 +6063,7 @@ end;
 			SectionLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionLabel.BorderSizePixel = 0
 			SectionLabel.Position = UDim2.new(0.5, 0, 0, 0)
-			SectionLabel.Size = UDim2.new(1, -32, 0, 22)
+			SectionLabel.Size = UDim2.new(1, -44, 0, 25)
 			SectionLabel.ZIndex = 9
 			SectionLabel.Font = Enum.Font.GothamMedium
 			SectionLabel.Text = Config.Name
@@ -6017,21 +6082,43 @@ end;
 			SectionHandler.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			SectionHandler.BorderSizePixel = 0
 			SectionHandler.ClipsDescendants = true
-			SectionHandler.Position = UDim2.new(0.5, 0, 0, 29)
-			SectionHandler.Size = UDim2.new(1, -10, 1, -29)
+			SectionHandler.Position = UDim2.new(0.5, 0, 0, 34)
+			SectionHandler.Size = UDim2.new(1, -12, 1, -34)
 			SectionHandler.ZIndex = 9
 
-			UIStroke.Transparency = 0.42
+			UIStroke.Transparency = 0.50
 			UIStroke.Color = Color3.fromRGB(45, 48, 58)
 			UIStroke.Parent = SectionHandler
 
 		UICorner.CornerRadius = UDim.new(0, 10)
 		UICorner.Parent = SectionHandler
 
+        local sectionBar=Instance.new('Frame');
+        sectionBar.Name='AkiwaveSectionRail';
+        sectionBar.BorderSizePixel=0;
+        sectionBar.BackgroundColor3=Akiwave.GetColor('Accent');
+        sectionBar.BackgroundTransparency=0.12;
+        sectionBar.Position=UDim2.new(0,10,0,10);
+        sectionBar.Size=UDim2.fromOffset(3,14);
+        sectionBar.ZIndex=10;
+        sectionBar.Parent=SectionFrame;
+        local barCorner=Instance.new('UICorner');
+        barCorner.CornerRadius=UDim.new(1,0);
+        barCorner.Parent=sectionBar;
+        Akiwave.BindColor(sectionBar,'BackgroundColor3','Accent');
+        SectionLabel.Size=UDim2.new(1,-50,0,24);
+        SectionLabel.Position=UDim2.new(0.5,7,0,5);
+        local innerPadding=Instance.new('UIPadding');
+        innerPadding.PaddingTop=UDim.new(0,7);
+        innerPadding.PaddingBottom=UDim.new(0,7);
+        innerPadding.PaddingLeft=UDim.new(0,7);
+        innerPadding.PaddingRight=UDim.new(0,7);
+        innerPadding.Parent=SectionHandler;
+
 			UIListLayout.Parent = SectionHandler
 			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-			UIListLayout.Padding = UDim.new(0, 3)
+			UIListLayout.Padding = UDim.new(0, 2)
 
 			UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(LPH_NO_VIRTUALIZE(function()
 
@@ -6042,7 +6129,7 @@ end;
 					})
 				else
 					NeverLose.PlayAnimate(SectionFrame , VSlowTween , {
-						Size = UDim2.new(1, -5, 0, UIListLayout.AbsoluteContentSize.Y + 29)
+						Size = UDim2.new(1, -5, 0, UIListLayout.AbsoluteContentSize.Y + 48)
 					})
 				end;
 			end));
@@ -7141,13 +7228,13 @@ end;
         local Badge=Instance.new('TextButton');
         Badge.Name='AkiwaveThemeBadge';
         Badge.AnchorPoint=Vector2.new(1,0.5);
-        Badge.Position=UDim2.new(1,-44,0.5,0);
-        Badge.Size=UDim2.fromOffset(122,28);
+        Badge.Position=UDim2.new(1,-49,0.5,0);
+        Badge.Size=UDim2.fromOffset(151,31);
         Badge.BackgroundColor3=Akiwave.GetColor('ControlDark');
         Badge.BorderSizePixel=0;
         Badge.AutoButtonColor=false;
         Badge.Font=Enum.Font.GothamBold;
-        Badge.TextSize=10;
+        Badge.TextSize=11;
         Badge.TextTruncate=Enum.TextTruncate.AtEnd;
         Badge.TextColor3=Akiwave.GetColor('TextSub');
         Badge.ZIndex=13;
