@@ -1,11 +1,11 @@
 --[[
-    Neverlose UI Library — Akiwave Edition v4 (themed, artwork enabled)
+    Neverlose UI Library — Akiwave Edition v4.1 (external HTTPS artwork)
     Original Neverlose.cc Library by 4lpaca (MIT).
     Extends the original public API; never auto-generates sample windows/tabs.
     GUI creation is performed by calling :CreateWindow() in your own script.
     Compatibility: best-effort for Roblox Luau runtimes; untested on individual executors.
     Runtime.StorageMode is 'native' or 'session-memory' (no persistent save).
-    Preset artwork uses Creator Store decal IDs; image permissions still vary by experience.
+    Preset artwork uses HTTPS image URLs; unsupported executors fall back to Roblox assets.
 ]]
 --[[
                           Neverlose.cc UI Library
@@ -418,12 +418,12 @@ Akiwave.Presets = {
 		end;
 		return p;
 	end)(), Image = { Enabled = false, Asset = '', Opacity = 0.35, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Marin Monochrome', Palette = BuildPalette(Color3.fromRGB(14, 14, 15), Color3.fromRGB(235, 235, 235)), Image = { Enabled = true, Asset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Gojo Violet', Palette = BuildPalette(Color3.fromRGB(16, 14, 24), Color3.fromRGB(167, 139, 250)), Image = { Enabled = true, Asset = 'rbxassetid://16928679461', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Frieren Forest', Palette = BuildPalette(Color3.fromRGB(13, 17, 14), Color3.fromRGB(146, 196, 138)), Image = { Enabled = true, Asset = 'rbxassetid://15148085308', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Zero Two Crimson', Palette = BuildPalette(Color3.fromRGB(22, 13, 15), Color3.fromRGB(240, 84, 96)), Image = { Enabled = true, Asset = 'rbxassetid://5223216506', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Nezuko Sakura', Palette = BuildPalette(Color3.fromRGB(20, 13, 17), Color3.fromRGB(244, 143, 177)), Image = { Enabled = true, Asset = 'rbxassetid://7068439603', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
-	{ Name = 'Cyberpunk Neon', Palette = BuildPalette(Color3.fromRGB(9, 13, 18), Color3.fromRGB(0, 238, 255)), Image = { Enabled = true, Asset = 'rbxassetid://89736843413939', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Marin Monochrome', Palette = BuildPalette(Color3.fromRGB(14, 14, 15), Color3.fromRGB(235, 235, 235)), Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/3ff2299e3bb716a8d30f3926e86bb5b3be49afe68e718168a02824420a8c6fb1.jpg', FallbackAsset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Gojo Violet', Palette = BuildPalette(Color3.fromRGB(16, 14, 24), Color3.fromRGB(167, 139, 250)), Image = { Enabled = true, Asset = 'https://media.wallpics.app/images/2026/04/17/pfp_1433_2e1b104b.png', FallbackAsset = 'rbxassetid://16928679461', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Frieren Forest', Palette = BuildPalette(Color3.fromRGB(13, 17, 14), Color3.fromRGB(146, 196, 138)), Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/EDYYJmabkShX.jpg', FallbackAsset = 'rbxassetid://15148085308', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Zero Two Crimson', Palette = BuildPalette(Color3.fromRGB(22, 13, 15), Color3.fromRGB(240, 84, 96)), Image = { Enabled = true, Asset = 'https://avatars.pfptown.com/482/zero-two-pfp-3978.png', FallbackAsset = 'rbxassetid://5223216506', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Nezuko Sakura', Palette = BuildPalette(Color3.fromRGB(20, 13, 17), Color3.fromRGB(244, 143, 177)), Image = { Enabled = true, Asset = 'https://avatars.pfptown.com/486/nezuko-pfp-3324.png', FallbackAsset = 'rbxassetid://7068439603', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
+	{ Name = 'Cyberpunk Neon', Palette = BuildPalette(Color3.fromRGB(9, 13, 18), Color3.fromRGB(0, 238, 255)), Image = { Enabled = true, Asset = 'https://image-1.uhdpaper.com/wallpaper/lucy-cyberpunk-edgerunners-series-4k-wallpaper-uhdpaper.com-638%401%40i.jpg', FallbackAsset = 'rbxassetid://89736843413939', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 } },
 };
 
 Akiwave.Current = {
@@ -435,7 +435,7 @@ Akiwave.Current = {
 		end;
 		return p;
 	end)(),
-    Image = { Enabled = true, Asset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 },
+    Image = { Enabled = true, Asset = 'https://cdn.rafled.com/anime-icons/images/3ff2299e3bb716a8d30f3926e86bb5b3be49afe68e718168a02824420a8c6fb1.jpg', FallbackAsset = 'rbxassetid://14412105393', Opacity = 0.55, Position = 'Background', Scale = 100, OffsetX = 0, OffsetY = 0 },
     WindowTransparency = 0.21,
 };
 -- Match the initial palette to the initial selected theme; saved config may override.
@@ -608,24 +608,123 @@ end;
 
 -- Anime image layers. Background sits inside WindowFrame, Left inside the
 -- sidebar, Right behind the tab content of the right menu.
-function Akiwave.SetArtwork(image, asset)
-    if typeof(image)~='Instance' or not image:IsA('ImageLabel') then return; end;
-    asset=tostring(asset or '');
-    if image:GetAttribute('AkiwaveAsset')==asset then return; end;
-    image:SetAttribute('AkiwaveAsset',asset);
-    image.Image=asset;
-    local id=asset:match('rbxassetid://(%d+)') or asset:match('^%d+$');
-    if id then
-        task.delay(2.3,function()
-            if not image.Parent or image:GetAttribute('AkiwaveAsset')~=asset then return;end;
-            local ok,loaded=pcall(function() return image.IsLoaded; end);
-            if ok and not loaded then
-                image.Image='rbxthumb://type=Asset&id='..id..'&w=420&h=420';
+-- HTTPS JPEG/PNG -> executor local file -> custom asset. Shared cached downloads.
+Akiwave.RemoteArtwork = {
+    Supported = AkiwavePersistentFiles and type(getcustomasset)=='function',
+    CacheFolder = 'AkiwaveArtworkCache',
+    MaximumBytes = 6*1024*1024,
+    Cache = {}, Pending = {}
+};
+local function IsRemoteArtwork(url)
+    return type(url)=='string' and #url<=2048 and url:match('^https://[%w%._%-]+[%w%-%._~:/%?#%[%]@!$&()*+,;=%%]*$')~=nil;
+end;
+local function ArtworkFileType(data)
+    if data:sub(1,8)=='\137PNG\r\n\26\n' then return '.png';end;
+    if data:sub(1,3)=='\255\216\255' then return '.jpg';end;
+    return nil;
+end;
+local function ArtworkHash(url)
+    local h=0;
+    for i=1,#url do h=(h*131+url:byte(i))%2147483647;end;
+    return tostring(h)..'_'..tostring(#url);
+end;
+function Akiwave.ResolveExternalArtwork(url,callback)
+    callback=type(callback)=='function' and callback or function()end;
+    if not IsRemoteArtwork(url) then callback(nil,'Expected a direct HTTPS image URL');return;end;
+    local state=Akiwave.RemoteArtwork;
+    if state.Cache[url] then callback(state.Cache[url]);return;end;
+    if state.Pending[url] then table.insert(state.Pending[url],callback);return;end;
+    state.Pending[url]={callback};
+    task.spawn(function()
+        local ok,result=pcall(function()
+            if not state.Supported then error('writefile + getcustomasset are required');end;
+            local prefix=state.CacheFolder..'/'..ArtworkHash(url);
+            local folderOk=pcall(function()
+                if not isfolder(state.CacheFolder) then makefolder(state.CacheFolder);end;
+            end);
+            if not folderOk then error('Cannot create cache directory');end;
+            for _,ext in ipairs({'.png','.jpg'}) do
+                local file=prefix..ext;
+                local fileOk,found=pcall(isfile,file);
+                if fileOk and found then
+                    local usable,uri=pcall(getcustomasset,file);
+                    if usable and type(uri)=='string' and uri~='' then return uri;end;
+                end;
             end;
+            local bytes;
+            local req=request or http_request or (syn and syn.request);
+            if type(req)=='function' then
+                local worked,res=pcall(req,{Url=url,Method='GET',Headers={
+                    ['Accept']='image/png,image/jpeg,*/*;q=0.7',
+                    ['User-Agent']='Mozilla/5.0'
+                }});
+                if worked and type(res)=='table' then
+                    local code=tonumber(res.StatusCode or res.Status or 0) or 0;
+                    if (code==0 or (code>=200 and code<300)) and type(res.Body)=='string' then
+                        bytes=res.Body;
+                    end;
+                end;
+            end;
+            if not bytes then
+                local got,data=pcall(function()return game:HttpGet(url);end);
+                if got and type(data)=='string' then bytes=data;end;
+            end;
+            if not bytes then error('HTTP request failed or host rejected it');end;
+            if #bytes<1 or #bytes>state.MaximumBytes then error('Artwork exceeds 6 MB or is empty');end;
+            local ext=ArtworkFileType(bytes);
+            if not ext then error('Image response was not PNG/JPEG');end;
+            local file=prefix..ext;
+            writefile(file,bytes);
+            local uri=getcustomasset(file);
+            if type(uri)~='string' or uri=='' then error('getcustomasset returned no URI');end;
+            return uri;
         end);
+        if ok then state.Cache[url]=result;end;
+        local callbacks=state.Pending[url] or {};
+        state.Pending[url]=nil;
+        for _,f in ipairs(callbacks) do pcall(f,ok and result or nil,ok and nil or tostring(result));end;
+    end);
+end;
+function Akiwave.SetArtwork(image,asset,fallback,onStatus)
+    if typeof(image)~='Instance' or not image:IsA('ImageLabel') then return;end;
+    asset=tostring(asset or '');fallback=tostring(fallback or '');
+    local key=asset..'|'..fallback;
+    if image:GetAttribute('AkiwaveAsset')==key then
+        if type(onStatus)=='function' then
+            local status=image:GetAttribute('AkiwaveArtworkStatus') or 'loading';
+            onStatus(status=='loaded',status);
+        end;
+        return;
+    end;
+    image:SetAttribute('AkiwaveAsset',key);
+    if IsRemoteArtwork(asset) then
+        image.Image=fallback;
+        image:SetAttribute('AkiwaveArtworkStatus','loading');
+        Akiwave.ResolveExternalArtwork(asset,function(uri,err)
+            if not image.Parent or image:GetAttribute('AkiwaveAsset')~=key then return;end;
+            if uri then
+                image.Image=uri;
+                image:SetAttribute('AkiwaveArtworkStatus','loaded');
+            else
+                image.Image=fallback;
+                image:SetAttribute('AkiwaveArtworkStatus',fallback~='' and 'fallback' or 'error');
+            end;
+            if type(onStatus)=='function' then onStatus(uri~=nil,uri and 'loaded' or tostring(err));end;
+        end);
+    else
+        local id=asset:match('rbxassetid://(%d+)') or asset:match('^%d+$');
+        image.Image=id and ('rbxassetid://'..id) or asset;
+        image:SetAttribute('AkiwaveArtworkStatus',asset~='' and 'loaded' or 'empty');
+        if type(onStatus)=='function' then onStatus(asset~='',asset~='' and 'roblox asset' or 'empty');end;
+        if id then
+            task.delay(2.3,function()
+                if not image.Parent or image:GetAttribute('AkiwaveAsset')~=key then return;end;
+                local worked,loaded=pcall(function()return image.IsLoaded;end);
+                if worked and not loaded then image.Image='rbxthumb://type=Asset&id='..id..'&w=420&h=420';end;
+            end);
+        end;
     end;
 end;
-
 function Akiwave.BindWindow(WindowFrame, LeftMenuFrame, RightMenuFrame)
     local function MakeLayer(name, parent, z)
         local img=Instance.new('ImageLabel');
@@ -674,7 +773,7 @@ function Akiwave.UpdateLayers()
                 local active=img==target and cfg.Enabled and asset~='';
                 img.Visible=active;
                 if active then
-                    Akiwave.SetArtwork(img,asset);
+                    Akiwave.SetArtwork(img,asset,cfg.FallbackAsset);
                     img.ImageTransparency=1-math.clamp(cfg.Opacity or 0.55,0,1);
                     img.AnchorPoint=Vector2.new(0.5,0.5);
                     img.Position=UDim2.new(0.5,cfg.OffsetX or 0,0.5,cfg.OffsetY or 0);
@@ -757,12 +856,18 @@ local function NormalizeTheme(input)
 
     local img = type(input.Image) == 'table' and input.Image or {};
     local migratedAsset=tostring(img.Asset or '');
+    local migratedFallback=tostring(img.FallbackAsset or '');
     local migratedEnabled=img.Enabled==true;
-    if migratedAsset=='' and type(input.Name)=='string' then
+    if type(input.Name)=='string' then
         for _,preset in ipairs(Akiwave.Presets) do
             if preset.Name==input.Name and preset.Image and preset.Image.Asset~='' then
-                migratedAsset=preset.Image.Asset;
-                migratedEnabled=true;
+                if migratedAsset=='' or migratedAsset==tostring(preset.Image.FallbackAsset or '') then
+                    migratedAsset=preset.Image.Asset;
+                    migratedFallback=preset.Image.FallbackAsset or '';
+                    migratedEnabled=true;
+                elseif migratedAsset==preset.Image.Asset then
+                    migratedFallback=preset.Image.FallbackAsset or migratedFallback;
+                end;
                 break;
             end;
         end;
@@ -775,6 +880,7 @@ local function NormalizeTheme(input)
 		Image = {
 			Enabled = migratedEnabled,
 			Asset = migratedAsset,
+			FallbackAsset = migratedFallback,
 			Opacity = math.clamp(tonumber(img.Opacity) or 0.35, 0, 1),
 			Position = (img.Position == 'Left' or img.Position == 'Right') and img.Position or 'Background',
 			Scale = math.clamp(tonumber(img.Scale) or 100, 10, 200),
@@ -4847,7 +4953,7 @@ function NeverLose:CreateThemeManager()
 
     -- Artwork: visible image preview and a simple set of controls.
     label(views.ARTWORK,'ArtworkHeading','CHARACTER ARTWORK',6,4,500,30,21,'Text',true);
-    label(views.ARTWORK,'ArtworkHelp','Uses Roblox image / decal asset IDs (availability varies by game).',6,35,554,20,11,'TextMuted2');
+    label(views.ARTWORK,'ArtworkHelp','Paste HTTPS PNG/JPG URL or Roblox image Asset ID. Files cached locally.',6,35,554,20,11,'TextMuted2');
     local artCanvas=frame(views.ARTWORK,'PreviewCanvas',4,70,552,165,'Surface',11,true);
     artCanvas.ClipsDescendants=true;
     local artImage=node('ImageLabel',artCanvas,'ArtworkPreview',{
@@ -4855,9 +4961,9 @@ function NeverLose:CreateThemeManager()
         Size=UDim2.fromScale(0.96,0.96),Image='',ScaleType=Enum.ScaleType.Fit,
         BackgroundTransparency=1,ImageTransparency=0.04,ZIndex=Z+4,
     });
-    local artFallback=label(artCanvas,'ArtworkFallback','✦  ENTER AN IMAGE ASSET ID',104,71,340,24,15,'TextSub',true);
+    local artFallback=label(artCanvas,'ArtworkFallback','✦  LOADING ARTWORK / ENTER IMAGE URL',104,71,340,24,15,'TextSub',true);
     artFallback.ZIndex=Z+3;
-    local artAsset=textBox(views.ARTWORK,'ArtworkID','Paste asset ID or rbxassetid://...',4,248,430,37,'');
+    local artAsset=textBox(views.ARTWORK,'ArtworkID','https://example.com/image.png or rbxassetid://...',4,248,430,37,'');
     local artEnabled=true;
     local applyArt;
     local enabledButton=click(views.ARTWORK,'ArtworkToggle','IMAGE: ON',444,248,114,37,function()
@@ -4909,16 +5015,21 @@ function NeverLose:CreateThemeManager()
     sliderInfo('IMAGE SCALE','Scale',40,200,1,455);
     sliderInfo('HORIZONTAL OFFSET','OffsetX',-180,180,1,535);
     sliderInfo('VERTICAL OFFSET','OffsetY',-180,180,1,615);
-    label(views.ARTWORK,'ArtWarning','If an asset is blocked by Roblox, upload one you own and enter its ID.',6,694,556,35,11,'TextMuted2');
+    label(views.ARTWORK,'ArtWarning','HTTPS downloads require writefile + getcustomasset. Image links may expire.',6,694,556,35,11,'TextMuted2');
     views.ARTWORK.CanvasSize=UDim2.fromOffset(0,742);
 
     applyArt=function()
         local cfg=Akiwave.Current.Image;
         artAsset.Text=cfg.Asset or '';
         enabledButton.Text=cfg.Enabled and 'IMAGE: ON' or 'IMAGE: OFF';
-        Akiwave.SetArtwork(artImage,cfg.Asset or '');
         artImage.Visible=cfg.Enabled and cfg.Asset~='';
-        artFallback.Visible=true;
+        artFallback.Visible=not artImage.Visible;
+        Akiwave.SetArtwork(artImage,cfg.Asset or '',cfg.FallbackAsset,function(loaded,status)
+            if artImage.Parent then
+                artFallback.Visible=not loaded;
+                artFallback.Text=loaded and '' or ('✦  '..tostring(status or 'LOADING IMAGE'));
+            end;
+        end);
         artImage.ImageTransparency=1-math.clamp(cfg.Opacity or 0.55,0,1);
         for name,b in pairs(posButtons) do
             local active=cfg.Position==name;
@@ -4932,6 +5043,7 @@ function NeverLose:CreateThemeManager()
         local numeric=input:match('^%d+$') or input:match('/asset/(%d+)') or input:match('id=(%d+)');
         if numeric then input='rbxassetid://'..numeric; end;
         Akiwave.Current.Image.Asset=input;
+        Akiwave.Current.Image.FallbackAsset='';
         if input~='' then Akiwave.Current.Image.Enabled=true;end;
         applyArt();
     end));
@@ -5004,9 +5116,11 @@ function NeverLose:CreateThemeManager()
         HeroAccent.BackgroundColor3=palette('Accent');
         HeroName.Text=Akiwave.Current.Name;
         local cfg=Akiwave.Current.Image;
-        Akiwave.SetArtwork(HeroArt,cfg.Asset or '');
         HeroArt.Visible=cfg.Enabled and cfg.Asset~='';
-        HeroFallback.Visible=true;
+        HeroFallback.Visible=not HeroArt.Visible;
+        Akiwave.SetArtwork(HeroArt,cfg.Asset or '',cfg.FallbackAsset,function(loaded)
+            if HeroArt.Parent then HeroFallback.Visible=not loaded;end;
+        end);
         for _,card in ipairs(cards) do
             local entry=card.Preset;
             local c=entry.Palette.Accent;
@@ -5018,9 +5132,11 @@ function NeverLose:CreateThemeManager()
             card.Border.Transparency=current and 0.08 or 0.48;
             card.Subtitle.Text=current and '●  ACTIVE' or 'APPLY THEME';
             card.Subtitle.TextColor3=current and c or palette('TextMuted2');
-            Akiwave.SetArtwork(card.Image,entry.Image.Asset or '');
             card.Image.Visible=entry.Image.Enabled and entry.Image.Asset~='';
-            card.Fallback.Visible=true;
+            card.Fallback.Visible=not card.Image.Visible;
+            Akiwave.SetArtwork(card.Image,entry.Image.Asset or '',entry.Image.FallbackAsset,function(loaded)
+                if card.Image.Parent then card.Fallback.Visible=not loaded;end;
+            end);
         end;
         for role,fields in pairs(editedColors) do
             local col=Akiwave.Current.Palette[role];
@@ -5033,7 +5149,7 @@ function NeverLose:CreateThemeManager()
             obj.Set(field=='Opacity' and math.floor((value or 0.55)*100+0.5) or (value or 0),false);
         end;
         applyArt();
-        storageInfo.Text=Akiwave.FileAPI and 'Storage: persistent local files' or 'Storage: session only (file API unavailable)';
+        storageInfo.Text=(Akiwave.FileAPI and 'Storage: persistent' or 'Storage: session only') .. (Akiwave.RemoteArtwork.Supported and '  |  HTTPS artwork ready' or '  |  HTTPS artwork unavailable');
         nameInput.Text=Akiwave.Current.Name;
         if currentTab=='SETTINGS' then unloadConfirmAt=-math.huge;unloadButton.Text='UNLOAD GUI';end;
         unloadButton.BackgroundColor3=Color3.fromRGB(87,36,47);
@@ -8008,7 +8124,7 @@ pcall(function()
     if type(env) == 'table' then env.AkiwaveUI = NeverLose; end;
 end);
 -- Example-only script begins. The main source file remains library-only.
--- Akiwave Edition v4 showcase. Run source.luau first or load it via raw GitHub URL.
+-- Akiwave Edition v4.1 showcase. Run source.luau first or load it via raw GitHub URL.
 local env = (getgenv and getgenv()) or _G
 local UI = assert(env.AkiwaveUI, "Please execute source.luau first")
 UI:SetTheme("Marin Monochrome")
